@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metrored – Actualización de Datos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00b8e6;
+    --cyan-dark: #0099c2;
+    --navy: #003d5c;
+    --navy-light: #004f75;
+    --white: #ffffff;
+    --gray-50: #f7f9fb;
+    --gray-100: #eef2f6;
+    --gray-300: #c8d4de;
+    --gray-500: #7a95a8;
+    --gray-700: #3d5a6c;
+    --success: #00c896;
+    --error: #e8324a;
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(0,61,92,0.10);
+    --shadow-lg: 0 12px 40px rgba(0,61,92,0.16);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--gray-50);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 40px;
+  }
+
+  .demo-nav {
+    width: 100%;
+    background: var(--navy);
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+  .demo-nav button {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .3px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,.25);
+    background: transparent;
+    color: rgba(255,255,255,.7);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .demo-nav button.active {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .demo-nav button:hover:not(.active) {
+    border-color: var(--cyan);
+    color: var(--white);
+  }
+
+  .phone {
+    width: 375px;
+    max-width: 100%;
+    margin-top: 24px;
+    background: var(--white);
+    border-radius: 28px;
+    box-shadow: var(--shadow-lg), 0 0 0 8px rgba(0,61,92,.06);
+    overflow: hidden;
+    min-height: 680px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-header {
+    background: var(--navy);
+    padding: 20px 24px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .app-header .logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: -.3px;
+  }
+  .app-header .logo span { color: var(--cyan); }
+  .app-header .sede-tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,.55);
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+
+  .progress-wrap {
+    background: var(--navy);
+    padding: 0 24px 16px;
+    display: flex;
+    gap: 5px;
+  }
+  .progress-wrap .seg {
+    height: 3px;
+    border-radius: 2px;
+    flex: 1;
+    background: rgba(255,255,255,.2);
+    transition: background .35s;
+  }
+  .progress-wrap .seg.done { background: var(--cyan); }
+  .progress-wrap .seg.active { background: var(--cyan); opacity: .6; }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    padding: 28px 24px 24px;
+    animation: fadeIn .3s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .screen-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .screen-sub {
+    font-size: 13.5px;
+    color: var(--gray-500);
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: var(--gray-700);
+    margin-bottom: 7px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    color: var(--navy);
+    background: var(--white);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(0,184,230,.12);
+  }
+  .field input.locked {
+    background: var(--gray-100);
+    color: var(--gray-500);
+    cursor: not-allowed;
+    border-color: var(--gray-100);
+  }
+  .field-wrap { position: relative; }
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; }
+
+  .otp-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .otp-group input {
+    width: 52px;
+    height: 58px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .otp-group input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(0,184,230,.12);
+  }
+  .otp-group input.filled {
+    border-color: var(--cyan);
+    background: rgba(0,184,230,.05);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: var(--cyan);
+    color: var(--navy);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    margin-top: auto;
+  }
+  .btn-primary:hover { background: var(--cyan-dark); }
+  .btn-primary:active { transform: scale(.98); }
+
+  .btn-ghost {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--gray-500);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 12px;
+    text-align: center;
+    width: 100%;
+  }
+  .btn-ghost:hover { color: var(--cyan-dark); }
+
+  .qr-illustration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    justify-content: center;
+    padding: 10px 0 24px;
+  }
+  .qr-box {
+    width: 180px;
+    height: 180px;
+    border-radius: 16px;
+    background: var(--white);
+    border: 2px solid var(--cyan);
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    grid-template-rows: repeat(7,1fr);
+    padding: 14px;
+    gap: 3px;
+    box-shadow: var(--shadow);
+  }
+  .qr-cell { border-radius: 2px; }
+  .qr-wrap { position: relative; }
+  .qr-label {
+    font-size: 13px;
+    color: var(--gray-500);
+    text-align: center;
+    max-width: 220px;
+    line-height: 1.5;
+  }
+  .qr-label strong { color: var(--navy); }
+  .scan-anim {
+    width: 180px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    border-radius: 2px;
+    animation: scan 2s ease-in-out infinite;
+    margin-top: -16px;
+  }
+  @keyframes scan {
+    0%   { transform: translateY(0); opacity: .8; }
+    50%  { transform: translateY(176px); opacity: .8; }
+    100% { transform: translateY(0); opacity: 0; }
+  }
+
+  .success-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+    padding: 0 8px;
+  }
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success), #00a878);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0,200,150,.25);
+    animation: popIn .4s cubic-bezier(.17,.67,.35,1.4);
+  }
+  @keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+  .success-icon svg { width: 36px; height: 36px; stroke: white; stroke-width: 2.5; fill: none; }
+  .success-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .success-sub {
+    font-size: 14px;
+    color: var(--gray-500);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .success-card {
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .success-card .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+  }
+  .success-card .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--navy);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .success-card .row:last-child { border-bottom: none; }
+  .success-card .row span:first-child { color: var(--gray-500); }
+  .success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,200,150,.1);
+    color: #00a878;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+  }
+  .success-badge::before { content: '✓'; font-size: 13px; }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: -10px;
+    margin-bottom: 12px;
+    padding-left: 4px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  .resend-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+  .resend-row button {
+    background: none;
+    border: none;
+    color: var(--cyan-dark);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    text-decoration: underline;
+  }
+
+  .info-box {
+    background: rgba(0,184,230,.07);
+    border-left: 3px solid var(--cyan);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--navy-light);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--gray-300);
+    margin: 6px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-100);
+  }
+
+  .form-scroll { overflow-y: auto; flex: 1; padding-bottom: 8px; }
+
+  .app-footer {
+    padding: 14px 24px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: center;
+  }
+  .app-footer span {
+    font-size: 10.5px;
+    color: var(--gray-300);
+    letter-spacing: .3px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="demo-nav">
+  <button class="active" onclick="goTo(0)">1 · Escaneo QR</button>
+  <button onclick="goTo(1)">2 · Validar Cédula</button>
+  <button onclick="goTo(2)">3 · Código OTP</button>
+  <button onclick="goTo(3)">4 · Editar Datos</button>
+  <button onclick="goTo(4)">5 · Confirmación</button>
+</nav>
+
+<div class="phone">
+  <div class="app-header">
+    <div class="logo">Metro<span>red</span></div>
+    <div class="sede-tag" id="sede-tag">Centro Médico · Iñaquito</div>
+  </div>
+
+  <div class="progress-wrap" id="progress">
+    <div class="seg active"></div>
+    <div class="seg"></div>
+    <div class="seg"></div>
+    <div class="seg"></div>
+    <div class="seg"></div>
+  </div>
+
+  <div class="screen active" id="s0">
+    <div class="screen-title">Actualiza<br>tus datos</div>
+    <p class="screen-sub">Escanea el QR en recepción o usa este portal para verificar tu información antes de tu cita.</p>
+    <div class="qr-illustration">
+      <div class="qr-wrap">
+        <div class="qr-box" id="qr-canvas"></div>
+        <div class="scan-anim"></div>
+      </div>
+      <p class="qr-label"><strong>CM Iñaquito · Pichincha</strong><br>Apunta tu cámara al código QR<br>o toca el botón para continuar.</p>
+    </div>
+    <button class="btn-primary" onclick="goTo(1)">Continuar →</button>
+  </div>
+
+  <div class="screen" id="s1">
+    <div class="screen-title">Identifica<br>tu cuenta</div>
+    <p class="screen-sub">Ingresa tu número de cédula para localizar tu historial en el sistema.</p>
+    <div class="field">
+      <label>Número de cédula</label>
+      <input type="text" id="cedula-input" placeholder="0 9 0 0 0 0 0 0 0 0" maxlength="10" inputmode="numeric" oninput="validateCedula(this)">
+    </div>
+    <p class="error-msg" id="cedula-error">Cédula no encontrada. Verifica el número e intenta nuevamente.</p>
+    <div class="info-box">Se enviará un código de verificación al correo registrado en tu historial.</div>
+    <button class="btn-primary" style="margin-top:auto" onclick="submitCedula()">Enviar código OTP</button>
+    <button class="btn-ghost" onclick="goTo(0)">← Volver</button>
+  </div>
+
+  <div class="screen" id="s2">
+    <div class="screen-title">Código<br>de verificación</div>
+    <p class="screen-sub">Ingresamos un código de 6 dígitos al correo <strong id="otp-email">j***z@gmail.com</strong>. Ingrésalo aquí.</p>
+    <div class="otp-group" id="otp-group">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,0)">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,1)">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,2)">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,3)">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,4)">
+      <input type="text" maxlength="1" inputmode="numeric" oninput="otpMove(this,5)">
+    </div>
+    <p class="error-msg" id="otp-error">Código incorrecto. Revisa tu correo e intenta de nuevo.</p>
+    <div class="resend-row">¿No lo recibiste? <button onclick="goTo(2)">Reenviar código</button></div>
+    <button class="btn-primary" onclick="submitOTP()">Verificar →</button>
+    <button class="btn-ghost" onclick="goTo(1)">← Volver</button>
+  </div>
+
+  <div class="screen" id="s3" style="padding-bottom:0">
+    <div class="screen-title">Revisa<br>tus datos</div>
+    <p class="screen-sub" style="margin-bottom:16px">Los campos con 🔒 no son editables. Actualiza lo que necesites.</p>
+    <div class="form-scroll">
+      <div class="section-label">Datos de identidad</div>
+      <div class="field">
+        <label>Nombres completos 🔒</label>
+        <div class="field-wrap"><input class="locked" type="text" value="Javier Alejandro Pérez Torres" readonly></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Cédula 🔒</label><input class="locked" type="text" value="0901234567" readonly></div>
+        <div class="field"><label>Sexo</label><select><option>Masculino</option><option>Femenino</option><option>Prefiero no decir</option></select></div>
+      </div>
+      <div class="field"><label>Fecha de nacimiento</label><input type="date" value="1985-03-14"></div>
+      <div class="section-label">Contacto</div>
+      <div class="field"><label>Correo electrónico</label><input type="email" value="javier.perez@gmail.com"></div>
+      <div class="field"><label>Celular</label><input type="tel" value="0987654321" placeholder="09XXXXXXXX"></div>
+      <div class="section-label">Ubicación</div>
+      <div class="field"><label>País 🔒</label><input class="locked" type="text" value="Ecuador" readonly></div>
+      <div class="field-row">
+        <div class="field"><label>Provincia 🔒</label><input class="locked" type="text" value="Pichincha" readonly></div>
+        <div class="field"><label>Cantón 🔒</label><input class="locked" type="text" value="Quito" readonly></div>
+      </div>
+      <div class="field"><label>Dirección</label><input type="text" value="Av. 6 de Diciembre N25-45 y Whymper"></div>
+      <div style="padding: 20px 0 8px;">
+        <button class="btn-primary" onclick="submitForm()">Guardar y sincronizar →</button>
+        <button class="btn-ghost" onclick="goTo(2)">← Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s4">
+    <div class="success-wrap">
+      <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="success-title">¡Todo<br>actualizado!</div>
+      <p class="success-sub">Tu información fue sincronizada con el sistema. Muestra esta pantalla en caja para continuar.</p>
+      <div class="success-badge">Sincronizado con HIS</div>
+      <div class="success-card">
+        <div class="label">Resumen de cambios</div>
+        <div class="row"><span>Celular</span><span>0987 654 321 ✓</span></div>
+        <div class="row"><span>Correo</span><span>javier.p@gmail.com ✓</span></div>
+        <div class="row"><span>Dirección</span><span>Actualizada ✓</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-footer"><span>Metrored Centros Médicos · metrored.med.ec</span></div>
+</div>
+
+<script>
+  const qr = document.getElementById('qr-canvas');
+  const pattern = [
+    [1,1,1,0,1,1,1],
+    [1,0,1,0,1,0,1],
+    [1,1,1,0,1,1,1],
+    [0,0,0,1,0,0,0],
+    [1,1,1,0,1,1,1],
+    [1,0,1,1,0,1,0],
+    [1,1,1,0,0,0,1]
+  ];
+  pattern.forEach(row => {
+    row.forEach(cell => {
+      const d = document.createElement('div');
+      d.className = 'qr-cell';
+      d.style.background = cell ? 'var(--navy)' : 'transparent';
+      qr.appendChild(d);
+    });
+  });
+
+  let current = 0;
+  function goTo(n) {
+    document.getElementById('s' + current).classList.remove('active');
+    document.getElementById('s' + n).classList.add('active');
+    current = n;
+    updateProgress(n);
+    updateNav(n);
+    document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  }
+
+  function updateProgress(n) {
+    const segs = document.querySelectorAll('.seg');
+    segs.forEach((s, i) => {
+      s.classList.remove('done', 'active');
+      if (i < n) s.classList.add('done');
+      else if (i === n) s.classList.add('active');
+    });
+  }
+
+  function updateNav(n) {
+    document.querySelectorAll('.demo-nav button').forEach((b, i) => {
+      b.classList.toggle('active', i === n);
+    });
+  }
+
+  function validateCedula(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 10);
+  }
+
+  function submitCedula() {
+    const val = document.getElementById('cedula-input').value;
+    if (val.length !== 10) {
+      document.getElementById('cedula-error').classList.add('show');
+      return;
+    }
+    goTo(2);
+  }
+
+  const otpInputs = document.querySelectorAll('#otp-group input');
+  function otpMove(el, idx) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 1);
+    if (el.value && idx < 5) otpInputs[idx + 1].focus();
+    el.classList.toggle('filled', !!el.value);
+  }
+
+  function submitOTP() {
+    const code = Array.from(otpInputs).map(i => i.value).join('');
+    if (code.length < 6) {
+      document.getElementById('otp-error').classList.add('show');
+      return;
+    }
+    goTo(3);
+  }
+
+  function submitForm() {
+    goTo(4);
+  }
+</script>
+</body>
+</html>
