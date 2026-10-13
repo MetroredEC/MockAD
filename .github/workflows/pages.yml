@@ -2,7 +2,7 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches: [main, claude/metrored-launch-landing-kzg3ma]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,10 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Show Pages configuration
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api "repos/${{ github.repository }}/pages" || true
       - name: Assemble site
         run: |
           mkdir -p _site
