@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metrored – Lanzamiento Iñaquito & San Luis</title>
+<meta name="description" content="Lanzamiento de Metrored Iñaquito y San Luis. Jueves 26 de noviembre, 10h00, San Luis Shopping. Confirma tu asistencia.">
+<meta property="og:title" content="Metrored · Lanzamiento Iñaquito & San Luis">
+<meta property="og:description" content="Jueves 26 de noviembre · 10h00 · San Luis Shopping · Smart casual">
+<meta property="og:image" content="assets/lanzamiento/cliente-agendar.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Paleta tomada de los KVs de campaña */
+    --blue: #1686f2;
+    --blue-deep: #1776d0;
+    --blue-ink: #0b3d7a;
+    --navy: #072a52;
+    --sky: #6edcff;
+    --sky-2: #6dc3fc;
+    --sky-3: #9fe7ff;
+    --sky-soft: #e6f8ff;
+    --white: #ffffff;
+    --gray-300: #c9d8e8;
+    --gray-500: #6f8aa6;
+    --gray-700: #36506b;
+    --error: #e8324a;
+
+    --font: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    --gutter: clamp(16px, 3.2vw, 44px);
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-io: cubic-bezier(.76, 0, .24, 1);
+    --ease-back: cubic-bezier(.34, 1.56, .64, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: clip; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--navy);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--sky); color: var(--navy); }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  /* ───────── Barra superior ───────── */
+  .topbar {
+    position: fixed; inset: 0 0 auto 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px var(--gutter);
+    z-index: 50;
+    color: var(--blue-ink);
+    pointer-events: none;
+    transition: color .4s;
+  }
+  .topbar.dark { color: var(--white); }
+  .topbar a { pointer-events: auto; text-decoration: none; }
+  .topbar .cta-mini {
+    border: 1px solid currentColor;
+    padding: 7px 14px; border-radius: 99px;
+    transition: background .3s, color .3s;
+  }
+  .topbar .cta-mini { background: rgba(255,255,255,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .topbar.dark .cta-mini { background: rgba(255,255,255,.08); }
+  .topbar .cta-mini:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* ═════════ HERO: estructura editorial (ref. teaser) + círculos de campaña ═════════ */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 54px var(--gutter) 18px;
+    background:
+      radial-gradient(120% 70% at 50% 62%, var(--sky-3) 0%, rgba(159,231,255,0) 60%),
+      linear-gradient(180deg, #ffffff 0%, var(--sky-soft) 100%);
+    overflow: hidden;
+  }
+  .wordmark {
+    position: relative; z-index: 3;
+    font-weight: 700;
+    line-height: .86;
+    letter-spacing: -.045em;
+    color: var(--blue);
+    white-space: nowrap;
+    display: flex; justify-content: space-between;
+    font-size: 15vw; /* JS lo ajusta al ancho exacto */
+    min-width: 0; width: 100%;
+    user-select: none;
+  }
+  .wordmark .ch { display: inline-block; overflow: hidden; padding-bottom: .06em; }
+  .wordmark .ch > span { display: inline-block; transform: translateY(110%); transition: transform 1.2s var(--ease-out); }
+  body.ready .wordmark .ch > span { transform: none; }
+
+  .hero-mid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    padding: clamp(12px, 2.4vh, 32px) 0;
+  }
+  .side { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 6px; }
+  .side.right { align-items: flex-end; text-align: right; }
+  .side b { font-family: var(--font); font-weight: 600; font-size: clamp(16px, 1.5vw, 22px); letter-spacing: -.01em; text-transform: none; color: var(--blue-ink); }
+  .side small { color: var(--gray-500); }
+
+  /* Escenario de círculos en profundidad */
+  .stage {
+    /* el alto restante tras el wordmark (~18vw) y el pie */
+    --size: clamp(220px, min(58vw, calc(100svh - 18vw - 200px)), 560px);
+    position: relative;
+    width: var(--size); height: var(--size);
+    perspective: 900px;
+  }
+  .ring {
+    position: absolute; left: 50%; top: 50%;
+    width: calc(var(--size) * var(--r)); height: calc(var(--size) * var(--r));
+    margin: calc(var(--size) * var(--r) / -2) 0 0 calc(var(--size) * var(--r) / -2);
+    border-radius: 50%;
+    will-change: transform;
+  }
+  .ring > i {
+    position: absolute; inset: 0; border-radius: 50%;
+    transform: scale(0);
+    transition: transform 1.6s var(--ease-back);
+    transition-delay: var(--dl);
+    animation: breathe var(--br, 7s) ease-in-out infinite alternate;
+    animation-play-state: paused;
+  }
+  body.ready .ring > i { transform: scale(1); animation-play-state: running; }
+  @keyframes breathe {
+    from { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+    to   { border-radius: 52% 48% 51% 49% / 48% 52% 49% 51%; }
+  }
+  .r1 { --r: 1.55; --dl: .15s; --br: 9s; }
+  .r1 > i { background: radial-gradient(circle at 50% 50%, rgba(110,220,255,.0) 55%, rgba(110,220,255,.55) 56%, rgba(110,220,255,.25) 70%, rgba(110,220,255,0) 71%); }
+  .r2 { --r: 1.25; --dl: .3s; --br: 8s; }
+  .r2 > i { background: linear-gradient(160deg, rgba(109,195,252,.75), rgba(22,134,242,.55)); }
+  .r3 { --r: 1.0; --dl: .45s; --br: 7s; }
+  .r3 > i { background: linear-gradient(170deg, var(--sky) 0%, var(--sky-2) 100%); box-shadow: 0 40px 80px -30px rgba(23,118,208,.55); }
+  .r4 { --r: .8; --dl: .6s; --br: 6s; }
+  .r4 > i { background: linear-gradient(180deg, #b6f0ff 0%, var(--sky) 100%); }
+
+  /* Retrato del cliente: el centro */
+  .r5 { --r: .8; --dl: .9s; }
+  .portrait { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
+  .portrait img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 20%;
+    clip-path: circle(0% at 50% 60%);
+    transform: scale(1.12);
+    transition: clip-path 1.3s var(--ease-io), transform 6s var(--ease-out);
+  }
+  .portrait img.on { clip-path: circle(75% at 50% 60%); transform: scale(1); z-index: 2; }
+  .portrait img.prev { clip-path: circle(75% at 50% 60%); z-index: 1; }
+  .portrait::after { content: ""; position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, rgba(7,42,82,0) 45%, rgba(7,42,82,.45) 100%); }
+
+  /* Burbujas que orbitan */
+  .orbit { position: absolute; inset: -6%; border-radius: 50%; animation: spin var(--t, 30s) linear infinite; pointer-events: none; }
+  .orbit i { position: absolute; top: 0; left: 50%; width: var(--s, 14px); height: var(--s, 14px); border-radius: 50%; background: var(--c, var(--white)); box-shadow: 0 6px 16px rgba(23,118,208,.25); opacity: 0; transition: opacity 1s 1.6s; }
+  body.ready .orbit i { opacity: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Titular testimonial sobre el retrato */
+  .quote {
+    position: absolute; left: 50%; bottom: 10%;
+    transform: translateX(-50%);
+    width: 118%;
+    z-index: 6;
+    text-align: center;
+    color: var(--white);
+    font-weight: 600;
+    font-size: clamp(22px, calc(var(--size) * .072), 46px);
+    line-height: 1.12;
+    letter-spacing: -.015em;
+    text-shadow: 0 2px 18px rgba(7,42,82,.45);
+    pointer-events: none;
+  }
+  .quote .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .08em; }
+  .quote .w > span { display: inline-block; transform: translateY(110%); transition: transform .9s var(--ease-out); }
+  .quote.show .w > span { transform: none; }
+  .quote.hide .w > span { transform: translateY(-110%); transition: transform .5s var(--ease-io); }
+  .quote small { display: block; margin-top: .45em; font-size: .42em; font-weight: 700; letter-spacing: .01em; color: var(--white); opacity: 0; transform: translateY(8px); transition: opacity .6s .5s, transform .6s .5s var(--ease-out); }
+  .quote.show small { opacity: 1; transform: none; }
+  .quote.hide small { opacity: 0; transition-delay: 0s; }
+
+  .dots { display: flex; gap: 8px; justify-content: center; margin-top: 14px; position: relative; z-index: 6; }
+  .dots button { width: 8px; height: 8px; border-radius: 99px; border: 0; background: rgba(11,61,122,.25); cursor: pointer; transition: width .5s var(--ease-out), background .3s; padding: 0; }
+  .dots button.on { width: 28px; background: var(--blue); }
+
+  .hero-foot { position: relative; z-index: 3; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; color: var(--blue-ink); }
+  .reveal-fade { opacity: 0; transform: translateY(8px); transition: opacity .8s var(--ease-out), transform .8s var(--ease-out); }
+  body.ready .reveal-fade { opacity: 1; transform: none; transition-delay: var(--d, 1.2s); }
+  .scroll-hint { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .scroll-hint i { width: 1px; height: 28px; background: currentColor; animation: drip 1.8s var(--ease-io) infinite; }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  /* ═════════ TÚNEL: "Tú eres el centro" (círculos en profundidad con scroll) ═════════ */
+  .tunnel { position: relative; height: 340vh; background: var(--blue); }
+  .tunnel-pin {
+    position: sticky; top: 0;
+    height: 100svh; overflow: hidden;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 50%, var(--blue) 0%, var(--blue-deep) 70%, #0f5fb0 100%);
+  }
+  #tRings { position: absolute; inset: 0; }
+  .t-ring {
+    position: absolute; left: 50%; top: 50%;
+    width: 100vmax; height: 100vmax;
+    margin: -50vmax 0 0 -50vmax;
+    border-radius: 50%;
+    will-change: transform, opacity;
+  }
+  .t-ring:nth-child(3n+1) { background: radial-gradient(circle, rgba(110,220,255,.0) 60%, rgba(110,220,255,.45) 61%, rgba(110,220,255,.12) 100%); }
+  .t-ring:nth-child(3n+2) { background: radial-gradient(circle, rgba(255,255,255,.0) 64%, rgba(255,255,255,.22) 65%, rgba(255,255,255,.04) 100%); }
+  .t-ring:nth-child(3n)   { background: radial-gradient(circle, rgba(22,134,242,.0) 58%, rgba(109,195,252,.55) 59%, rgba(23,118,208,.25) 100%); }
+  .t-core {
+    position: relative; z-index: 5;
+    width: min(46vmin, 380px); aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--sky);
+    box-shadow: 0 0 0 14px rgba(255,255,255,.18), 0 30px 80px rgba(7,42,82,.35);
+    will-change: transform;
+  }
+  .t-core img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; opacity: 0; transition: opacity .8s; }
+  .t-core img.on { opacity: 1; }
+  .t-text {
+    position: absolute; inset: 0; z-index: 6;
+    display: grid; place-items: center;
+
+    pointer-events: none;
+    text-align: center;
+    color: var(--white);
+  }
+  .t-line {
+    position: absolute;
+    font-weight: 700;
+    font-size: clamp(48px, 8.4vw, 150px);
+    letter-spacing: -.05em;
+    line-height: .9;
+    text-shadow: 0 6px 40px rgba(7,42,82,.35);
+    opacity: 0;
+    transform: scale(.7);
+    transition: opacity .6s, transform .9s var(--ease-out);
+    padding: 0 var(--gutter);
+    /* el titular cae sobre la parte baja del círculo, como en los KVs (margen/2 = desplazamiento) */
+    margin-top: calc(min(46vmin, 380px) * .62);
+  }
+  .t-line.on { opacity: 1; transform: none; }
+  .t-line.past { opacity: 0; transform: scale(1.6); filter: blur(8px); transition: opacity .5s, transform .9s var(--ease-out), filter .6s; }
+  .t-line small { display: block; font-size: .2em; font-weight: 500; letter-spacing: 0; margin-top: .6em; }
+  .t-progress { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 18px; z-index: 7; display: flex; justify-content: space-between; color: rgba(255,255,255,.75); }
+
+  /* ───────── Marquee ───────── */
+  .marquee { position: relative; z-index: 2; background: var(--sky); color: var(--navy); overflow: hidden; padding: 18px 0; transform: rotate(-2deg) scale(1.04); margin: 50px 0; }
+  .marquee.alt { background: var(--navy); color: var(--white); transform: rotate(1.5deg) scale(1.04); }
+  .marquee-track { display: flex; width: max-content; will-change: transform; }
+  .marquee-track span { font-weight: 700; font-size: clamp(26px, 4.4vw, 58px); letter-spacing: -.03em; padding-right: .6em; white-space: nowrap; line-height: 1.1; }
+  .marquee-track span em { font-style: normal; -webkit-text-stroke: 1.5px var(--navy); color: transparent; }
+  .marquee.alt .marquee-track span em { -webkit-text-stroke-color: var(--white); }
+
+  /* ───────── Secciones ───────── */
+  section.pad { position: relative; z-index: 1; padding: clamp(72px, 12vh, 140px) var(--gutter); }
+  .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--gray-500); margin-bottom: 28px; }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+
+  .big-line { font-weight: 700; font-size: clamp(38px, 7vw, 116px); line-height: .98; letter-spacing: -.045em; }
+  .big-line .ln { display: block; overflow: hidden; padding-bottom: .04em; }
+  .big-line .ln > span { display: inline-block; transform: translateY(110%); transition: transform 1.1s var(--ease-out); }
+  .big-line.in .ln > span { transform: none; }
+  .big-line .ln:nth-child(2) > span { transition-delay: .08s; }
+  .big-line .ln:nth-child(3) > span { transition-delay: .16s; }
+  .big-line .ln:nth-child(4) > span { transition-delay: .24s; }
+  .big-line .c { color: var(--blue); }
+  .big-line .o { -webkit-text-stroke: 2px var(--navy); color: transparent; }
+
+  .rv { opacity: 0; transform: translateY(30px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); }
+  .rv.in { opacity: 1; transform: none; }
+
+  .intro-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px, 6vw, 96px); align-items: end; }
+  .intro-grid p { font-size: clamp(16px, 1.3vw, 19px); line-height: 1.6; color: var(--gray-700); max-width: 46ch; }
+
+  /* Testimonios: cada cliente dentro de su círculo */
+  .voices { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: clamp(48px, 9vh, 100px); }
+  .voice { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; }
+  .voice .circ { position: relative; width: min(100%, 340px); aspect-ratio: 1; }
+  .voice .circ::before, .voice .circ::after { content: ""; position: absolute; border-radius: 50%; transition: transform 1s var(--ease-out); }
+  .voice .circ::before { inset: -9%; background: rgba(110,220,255,.35); }
+  .voice .circ::after { inset: -4%; background: rgba(109,195,252,.55); }
+  .voice .circ img { position: relative; z-index: 1; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 20%; background: var(--sky); transition: transform 1s var(--ease-out); }
+  .voice:hover .circ::before { transform: scale(1.08); }
+  .voice:hover .circ::after { transform: scale(1.04); }
+  .voice:hover .circ img { transform: scale(.97); }
+  .voice blockquote { font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.2; letter-spacing: -.02em; max-width: 18ch; color: var(--navy); }
+  .voice blockquote::before { content: "“"; color: var(--blue); }
+  .voice blockquote::after { content: "”"; color: var(--blue); }
+
+  /* Sedes */
+  .sedes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
+  .sede {
+    position: relative; border-radius: 32px; overflow: hidden; isolation: isolate;
+    min-height: clamp(420px, 66vh, 640px);
+    padding: clamp(22px, 2.6vw, 38px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--white);
+  }
+  .sede.a { background: linear-gradient(160deg, var(--blue) 0%, var(--blue-deep) 100%); }
+  .sede.b { background: linear-gradient(160deg, var(--sky) 0%, var(--sky-2) 100%); color: var(--navy); }
+  .sede .rings { position: absolute; z-index: -1; right: -30%; bottom: -30%; width: 110%; aspect-ratio: 1; }
+  .sede .rings i { position: absolute; border-radius: 50%; inset: calc(var(--k) * 11%); background: rgba(255,255,255,calc(.07 + var(--k) * .04)); animation: pulse 6s ease-in-out infinite; animation-delay: calc(var(--k) * -.8s); }
+  @keyframes pulse { 50% { transform: scale(1.05); } }
+  .sede .scene { position: absolute; z-index: -1; right: 7%; bottom: 7%; width: 42%; aspect-ratio: 240 / 700; border-radius: 999px; overflow: hidden; box-shadow: 0 30px 60px -20px rgba(7,42,82,.45); }
+  .sede .scene img { width: 100%; height: 100%; object-fit: cover; }
+  .sede .num { font-weight: 700; font-size: clamp(80px, 11vw, 180px); line-height: .8; letter-spacing: -.07em; opacity: .9; }
+  .sede h3 { font-weight: 700; font-size: clamp(34px, 4.2vw, 64px); line-height: .95; letter-spacing: -.045em; max-width: 9ch; }
+  .sede p { max-width: 26ch; line-height: 1.5; opacity: .9; margin-top: 12px; font-size: 15px; }
+  .sede .addr { margin-top: 16px; display: inline-flex; border: 1px solid currentColor; border-radius: 99px; padding: 7px 13px; }
+  .sede .top { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .tilt { transition: transform .6s var(--ease-out); }
+
+  /* Evento */
+  .event { background: var(--navy); color: var(--white); border-radius: 40px 40px 0 0; overflow: hidden; }
+  .event .eyebrow { color: rgba(255,255,255,.55); }
+  .event .big-line .c { color: var(--sky); }
+  .event-rings { position: absolute; right: -18vw; top: -18vw; width: 60vw; aspect-ratio: 1; pointer-events: none; }
+  .event-rings i { position: absolute; border-radius: 50%; inset: calc(var(--k) * 12%); border: 1.5px solid rgba(110,220,255,calc(.12 + var(--k) * .06)); animation: pulse 7s ease-in-out infinite; animation-delay: calc(var(--k) * -1s); }
+  .details { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,.18); margin-top: clamp(40px, 8vh, 80px); }
+  .detail { padding: 26px 20px 30px 0; border-right: 1px solid rgba(255,255,255,.18); }
+  .detail + .detail { padding-left: 20px; }
+  .detail:last-child { border-right: 0; }
+  .detail .k { color: rgba(255,255,255,.5); margin-bottom: 18px; display: block; }
+  .detail .v { font-weight: 700; font-size: clamp(24px, 2.6vw, 40px); letter-spacing: -.035em; line-height: 1; }
+  .detail .s { margin-top: 10px; color: rgba(255,255,255,.65); font-size: 14px; line-height: 1.45; }
+  .detail a.s { display: inline-block; text-decoration: none; border-bottom: 1px solid var(--sky); color: var(--sky); }
+
+  .countdown { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: clamp(40px, 8vh, 80px); }
+  .cd { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 22px; padding: clamp(14px, 2vw, 26px); }
+  .cd b { display: block; font-weight: 700; font-size: clamp(44px, 7.6vw, 124px); line-height: .9; letter-spacing: -.05em; color: var(--sky); font-variant-numeric: tabular-nums; }
+  .cd span { display: block; margin-top: 10px; color: rgba(255,255,255,.55); }
+
+  /* RSVP */
+  .rsvp { background: var(--navy); color: var(--white); padding-top: 0 !important; }
+  .rsvp-card { background: var(--white); color: var(--navy); border-radius: 36px; display: grid; grid-template-columns: 1fr 1.15fr; overflow: hidden; position: relative; }
+  .rsvp-side {
+    background: linear-gradient(165deg, var(--sky) 0%, var(--blue) 100%);
+    color: var(--white);
+    padding: clamp(24px, 4vw, 56px);
+    position: relative; overflow: hidden; isolation: isolate;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
+  }
+  .rsvp-side .rings { position: absolute; z-index: -1; width: 130%; aspect-ratio: 1; right: -55%; bottom: -55%; }
+  .rsvp-side .rings i { position: absolute; border-radius: 50%; inset: calc(var(--k) * 12%); background: rgba(255,255,255,calc(.06 + var(--k) * .035)); animation: pulse 6s ease-in-out infinite; animation-delay: calc(var(--k) * -.7s); }
+  .rsvp-side h2 { font-weight: 700; font-size: clamp(46px, 6.4vw, 100px); line-height: .9; letter-spacing: -.05em; }
+  .rsvp-side p { line-height: 1.55; max-width: 32ch; margin-top: 18px; }
+  .rsvp-meta { display: grid; gap: 6px; }
+
+  .rsvp-form { padding: clamp(24px, 4vw, 56px); display: flex; flex-direction: column; }
+  .field { position: relative; margin-bottom: 18px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field input, .field textarea {
+    width: 100%;
+    font: 500 16px/1.3 var(--font);
+    color: var(--navy);
+    background: transparent;
+    border: 0; border-bottom: 1.5px solid var(--gray-300); border-radius: 0;
+    padding: 24px 0 10px;
+    outline: none; appearance: none;
+    transition: border-color .3s;
+  }
+  .field textarea { resize: vertical; min-height: 48px; }
+  .field label { position: absolute; left: 0; top: 24px; color: var(--gray-500); font-size: 15px; pointer-events: none; transform-origin: left top; transition: transform .35s var(--ease-out), color .3s; }
+  .field input:focus + label, .field input:not(:placeholder-shown) + label,
+  .field textarea:focus + label, .field textarea:not(:placeholder-shown) + label { transform: translateY(-20px) scale(.74); color: var(--blue); }
+  .field .bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease-out); }
+  .field input:focus ~ .bar, .field textarea:focus ~ .bar { transform: scaleX(1); }
+  .field.err input { border-bottom-color: var(--error); }
+  .field .msg { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+  .field.err .msg { display: block; }
+
+  .choice-label { display: block; color: var(--gray-500); margin: 10px 0 12px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label { cursor: pointer; border: 1.5px solid var(--gray-300); border-radius: 99px; padding: 11px 18px; font-weight: 500; font-size: 15px; transition: background .3s, border-color .3s, color .3s; user-select: none; }
+  .choices label:hover { border-color: var(--blue); }
+  .choices input:checked + label { background: var(--blue); border-color: var(--blue); color: var(--white); }
+  .choices input:focus-visible + label { outline: 2px solid var(--sky); outline-offset: 2px; }
+  .choices.err label { border-color: var(--error); }
+
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--gray-700); line-height: 1.45; margin: 4px 0 24px; }
+  .consent input { accent-color: var(--blue); width: 18px; height: 18px; margin-top: 1px; flex: none; }
+
+  .btn {
+    position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    font: 600 16px/1 var(--font);
+    padding: 20px 30px; border-radius: 99px; border: 0; cursor: pointer;
+    background: var(--blue); color: var(--white);
+    overflow: hidden; isolation: isolate;
+    transition: transform .4s var(--ease-out), color .4s;
+    text-decoration: none;
+  }
+  .btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--navy); border-radius: 50%; transform: translateY(135%) scale(1.4); transition: transform .6s var(--ease-out), border-radius .6s; }
+  .btn:hover::before { transform: translateY(0) scale(1.4); border-radius: 0; }
+  .btn .arr { transition: transform .4s var(--ease-out); }
+  .btn:hover .arr { transform: translateX(4px) rotate(-45deg); }
+  .btn[disabled] { opacity: .6; cursor: progress; }
+  .btn.ghost { background: transparent; color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+  .btn.ghost:hover { color: var(--white); }
+  .rsvp-form .btn { width: 100%; margin-top: auto; }
+  .form-error { color: var(--error); font-size: 14px; margin-top: 12px; display: none; }
+
+  /* Ticket de confirmación */
+  .ticket-wrap { display: none; padding: clamp(24px, 4vw, 56px); flex-direction: column; justify-content: center; gap: 22px; }
+  .rsvp-card.done .rsvp-form { display: none; }
+  .rsvp-card.done .ticket-wrap { display: flex; }
+  .ticket { position: relative; background: linear-gradient(160deg, var(--blue) 0%, var(--blue-deep) 100%); color: var(--white); border-radius: 24px; padding: 26px; overflow: hidden; isolation: isolate; animation: ticketIn 1.1s var(--ease-out) both; }
+  .ticket .rings { position: absolute; z-index: -1; width: 70%; aspect-ratio: 1; right: -22%; top: -40%; }
+  .ticket .rings i { position: absolute; border-radius: 50%; inset: calc(var(--k) * 14%); background: rgba(255,255,255,calc(.05 + var(--k) * .04)); }
+  @keyframes ticketIn { from { transform: translateY(40px) rotate(-4deg) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 64%; width: 26px; height: 26px; border-radius: 50%; background: var(--white); }
+  .ticket::before { left: -13px; } .ticket::after { right: -13px; }
+  .ticket .t-head { display: flex; justify-content: space-between; color: var(--sky-3); }
+  .ticket .t-name { font-weight: 700; font-size: clamp(28px, 3.4vw, 46px); letter-spacing: -.04em; line-height: 1; margin: 26px 0 8px; word-break: break-word; }
+  .ticket .t-perf { border-top: 1.5px dashed rgba(255,255,255,.35); margin: 26px 0 18px; }
+  .ticket .t-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ticket .t-grid small { display: block; color: rgba(255,255,255,.6); margin-bottom: 4px; }
+  .ticket .t-grid b { font-weight: 600; font-size: 14px; }
+  .ticket-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ticket-actions .btn { padding: 16px 22px; font-size: 15px; }
+  .done-title { font-weight: 700; font-size: clamp(32px, 3.8vw, 54px); letter-spacing: -.045em; line-height: 1; }
+
+  /* Footer */
+  footer { position: relative; background: var(--navy); color: var(--white); padding: clamp(60px, 12vh, 120px) var(--gutter) 18px; overflow: hidden; }
+  footer .foot-word { font-weight: 700; letter-spacing: -.045em; line-height: .86; font-size: 15vw; white-space: nowrap; display: flex; justify-content: space-between; color: var(--blue); }
+  footer .foot-word .ch { display: inline-block; }
+  footer .foot-word .ch > span { display: inline-block; transform: none !important; }
+  footer .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 18px; color: rgba(255,255,255,.6); }
+
+  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+
+  /* ───────── Responsive ───────── */
+  @media (max-width: 900px) {
+    .intro-grid, .sedes, .rsvp-card { grid-template-columns: 1fr; }
+    .voices { grid-template-columns: 1fr; gap: 64px; }
+    .details { grid-template-columns: 1fr 1fr; }
+    .detail:nth-child(2) { border-right: 0; }
+    .detail:nth-child(3) { padding-left: 0; }
+    .detail:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.18); }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: 50px; }
+    .hero-mid { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 14px; }
+    .side, .side.right { width: 100%; align-items: flex-start; text-align: left; }
+    .side.right { align-items: flex-end; text-align: right; }
+    .hero-mid .side.left { order: -1; }
+    .stage { --size: min(78vw, 46svh); margin: 8vw 0; }
+    .hero-foot .hide-sm { display: none; }
+    .countdown { grid-template-columns: repeat(2, 1fr); }
+    .field-row { grid-template-columns: 1fr; gap: 0; }
+    .ticket .t-grid { grid-template-columns: 1fr 1fr; }
+    .topbar .brand-txt { display: none; }
+    .sede .scene { width: 36%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar mono">
+  <a href="#top" class="brand-txt">Metrored · Centros Médicos</a>
+  <span class="reveal-fade" style="--d:1.6s">26.11 — 10h00</span>
+  <a href="#rsvp" class="cta-mini">Confirmar asistencia</a>
+</header>
+
+<main id="top">
+
+  <!-- ═════ HERO ═════ -->
+  <section class="hero" aria-label="Lanzamiento Metrored Iñaquito y San Luis">
+    <h1 class="wordmark" id="wordmark" aria-label="Metrored"></h1>
+
+    <div class="hero-mid">
+      <div class="side left mono reveal-fade" style="--d:1.5s">
+        <small>Nueva sede</small>
+        <b>Iñaquito</b>
+        <small data-scramble>Av. Juan Diguja y Vozandes</small>
+      </div>
+
+      <div>
+        <div class="stage" id="stage">
+          <div class="ring r1" data-depth="10"><i></i></div>
+          <div class="ring r2" data-depth="22"><i></i></div>
+          <div class="ring r3" data-depth="34"><i></i>
+            <div class="orbit" style="--t:26s"><i style="--s:16px"></i></div>
+            <div class="orbit" style="--t:38s; transform:rotate(140deg); inset:-12%"><i style="--s:10px; --c:var(--sky)"></i></div>
+            <div class="orbit" style="--t:44s; transform:rotate(250deg); inset:-2%"><i style="--s:8px; --c:var(--blue)"></i></div>
+          </div>
+          <div class="ring r4" data-depth="46"><i></i></div>
+          <div class="ring r5" data-depth="58"><i>
+            <div class="portrait" id="portrait">
+              <img src="assets/lanzamiento/cliente-agendar.webp" alt="Clienta de Metrored sonriendo" class="on">
+              <img src="assets/lanzamiento/cliente-cerca.webp" alt="Madre e hijo, clientes de Metrored">
+              <img src="assets/lanzamiento/cliente-accesible.webp" alt="Clienta adulta mayor de Metrored">
+            </div>
+          </i></div>
+          <div class="quote" id="quote" aria-live="polite"></div>
+        </div>
+        <div class="dots reveal-fade" id="dots" style="--d:2s"></div>
+      </div>
+
+      <div class="side right mono reveal-fade" style="--d:1.6s">
+        <small>Nueva sede</small>
+        <b>San Luis</b>
+        <small data-scramble>San Luis Shopping</small>
+      </div>
+    </div>
+
+    <div class="hero-foot mono">
+      <span class="reveal-fade" style="--d:1.8s">Lanzamiento | Jue. 26.11.2026</span>
+      <a href="#centro" class="scroll-hint reveal-fade hide-sm" style="--d:2s"><i></i>Descubre</a>
+      <span class="reveal-fade" style="--d:1.9s">Grupo Hospital Metropolitano</span>
+    </div>
+  </section>
+
+  <!-- ═════ TÚNEL DE CÍRCULOS ═════ -->
+  <section class="tunnel" data-dark id="centro" aria-label="Tú eres el centro">
+    <div class="tunnel-pin">
+      <div id="tRings" aria-hidden="true"></div>
+      <div class="t-core" id="tCore" aria-hidden="true">
+        <img src="assets/lanzamiento/cliente-agendar.webp" alt="" class="on">
+        <img src="assets/lanzamiento/cliente-cerca.webp" alt="">
+        <img src="assets/lanzamiento/cliente-accesible.webp" alt="">
+      </div>
+      <div class="t-text">
+        <div class="t-line on">Tú</div>
+        <div class="t-line">eres el</div>
+        <div class="t-line">centro.</div>
+        <div class="t-line">de todo lo<br>que hacemos<small>Por eso llegamos más cerca de ti.</small></div>
+      </div>
+      <div class="t-progress mono"><span>Metrored</span><span id="tPct">00</span><span>Iñaquito | San Luis</span></div>
+    </div>
+  </section>
+
+  <!-- Marquee 1 -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" data-speed="1">
+      <span>Es un alivio tener un Metrored cerca de mí ✦ <em>Nuevo Metrored Iñaquito</em> ✦ San Luis ✦</span>
+    </div>
+  </div>
+
+  <!-- Intro + voces -->
+  <section class="pad" id="evento" aria-labelledby="intro-t">
+    <div class="eyebrow mono">Te invitamos</div>
+    <div class="intro-grid">
+      <h2 class="big-line" data-in id="intro-t">
+        <span class="ln"><span>Dos nuevos</span></span>
+        <span class="ln"><span>centros, con <span class="c">el</span></span></span>
+        <span class="ln"><span><span class="c">cliente</span> en el</span></span>
+        <span class="ln"><span><span class="o">centro.</span></span></span>
+      </h2>
+      <p class="rv">Metrored llega a Iñaquito y San Luis para estar más cerca de ti y de tu familia. Acompáñanos en el lanzamiento oficial: conoce los nuevos espacios, al equipo médico y todo lo que viene.</p>
+    </div>
+
+    <div class="voices">
+      <figure class="voice rv">
+        <div class="circ"><img src="assets/lanzamiento/cliente-agendar.webp" alt="Clienta de Metrored con su celular" loading="lazy"></div>
+        <blockquote>La tranquilidad de agendar rápido y fácil</blockquote>
+      </figure>
+      <figure class="voice rv" style="transition-delay:.1s">
+        <div class="circ"><img src="assets/lanzamiento/cliente-cerca.webp" alt="Madre e hijo sonriendo" loading="lazy"></div>
+        <blockquote>Es un alivio tener un Metrored cerca de mí</blockquote>
+      </figure>
+      <figure class="voice rv" style="transition-delay:.2s">
+        <div class="circ"><img src="assets/lanzamiento/cliente-accesible.webp" alt="Adulta mayor sonriendo" loading="lazy"></div>
+        <blockquote>Merezco un servicio de salud accesible</blockquote>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Sedes -->
+  <section class="pad" style="padding-top:0" aria-label="Nuevas sedes">
+    <div class="sedes">
+      <article class="sede a rv tilt">
+        <div class="rings" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+        <div class="scene"><img src="assets/lanzamiento/escena-agendar.webp" alt="Clienta llegando a Metrored" loading="lazy"></div>
+        <div class="top"><span class="num">01</span><span class="mono">Quito · Norte</span></div>
+        <div>
+          <h3>Nuevo Metrored Iñaquito</h3>
+          <p>Atención ágil y cercana, a pasos de tu trabajo y tu casa.</p>
+          <span class="addr mono">Av. Juan Diguja y Vozandes</span>
+        </div>
+      </article>
+      <article class="sede b rv tilt" style="transition-delay:.12s">
+        <div class="rings" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+        <div class="scene"><img src="assets/lanzamiento/escena-cerca.webp" alt="Madre e hijo en Metrored" loading="lazy"></div>
+        <div class="top"><span class="num">02</span><span class="mono">Valle de los Chillos</span></div>
+        <div>
+          <h3>Nuevo Metrored San Luis</h3>
+          <p>Salud de calidad en el Valle, para ti y tu familia.</p>
+          <span class="addr mono">San Luis Shopping</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Marquee 2 -->
+  <div class="marquee alt" aria-hidden="true">
+    <div class="marquee-track" data-speed="-1">
+      <span>Jueves 26 de noviembre ✦ <em>10h00</em> ✦ San Luis Shopping ✦ <em>Smart casual</em> ✦</span>
+    </div>
+  </div>
+
+  <!-- Detalles del evento -->
+  <section class="pad event" data-dark aria-labelledby="det-t">
+    <div class="event-rings" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+    <div class="eyebrow mono">El evento</div>
+    <h2 class="big-line" data-in id="det-t">
+      <span class="ln"><span>Guarda</span></span>
+      <span class="ln"><span>la <span class="c">fecha.</span></span></span>
+    </h2>
+
+    <div class="details">
+      <div class="detail rv"><span class="k mono">Fecha</span><div class="v">Jueves<br>26 nov.</div><div class="s">2026</div></div>
+      <div class="detail rv" style="transition-delay:.08s"><span class="k mono">Hora</span><div class="v">10h00</div><div class="s">Te recomendamos llegar 15 min antes</div></div>
+      <div class="detail rv" style="transition-delay:.16s"><span class="k mono">Lugar</span><div class="v">San Luis<br>Shopping</div><a class="s" href="https://www.google.com/maps/search/?api=1&query=San+Luis+Shopping+Sangolqu%C3%AD" target="_blank" rel="noopener">Ver en el mapa ↗</a></div>
+      <div class="detail rv" style="transition-delay:.24s"><span class="k mono">Vestimenta</span><div class="v">Smart<br>casual</div><div class="s">Elegante y cómodo</div></div>
+    </div>
+
+    <div class="countdown" aria-label="Cuenta regresiva al evento">
+      <div class="cd rv"><b data-cd="d">00</b><span class="mono">Días</span></div>
+      <div class="cd rv" style="transition-delay:.06s"><b data-cd="h">00</b><span class="mono">Horas</span></div>
+      <div class="cd rv" style="transition-delay:.12s"><b data-cd="m">00</b><span class="mono">Minutos</span></div>
+      <div class="cd rv" style="transition-delay:.18s"><b data-cd="s">00</b><span class="mono">Segundos</span></div>
+    </div>
+  </section>
+
+  <!-- RSVP -->
+  <section class="pad rsvp" data-dark id="rsvp" aria-labelledby="rsvp-t">
+    <div class="rsvp-card rv" id="rsvpCard">
+      <div class="rsvp-side">
+        <div class="rings" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+        <div>
+          <div class="mono">RSVP</div>
+          <h2 id="rsvp-t" style="margin-top:18px">¿Nos acom&shy;pañas?</h2>
+          <p>Confirma tu asistencia para reservar tu lugar. Los cupos son limitados.</p>
+        </div>
+        <div class="rsvp-meta mono">
+          <span>Jue. 26.11.2026 — 10h00</span>
+          <span>San Luis Shopping</span>
+          <span>Vestimenta: smart casual</span>
+        </div>
+      </div>
+
+      <form class="rsvp-form" id="rsvpForm" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <input id="f-nombre" name="nombre" type="text" placeholder=" " autocomplete="given-name" required>
+            <label for="f-nombre">Nombre</label><i class="bar"></i>
+            <div class="msg">Ingresa tu nombre</div>
+          </div>
+          <div class="field">
+            <input id="f-apellido" name="apellido" type="text" placeholder=" " autocomplete="family-name" required>
+            <label for="f-apellido">Apellido</label><i class="bar"></i>
+            <div class="msg">Ingresa tu apellido</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <input id="f-email" name="email" type="email" placeholder=" " autocomplete="email" required>
+            <label for="f-email">Correo electrónico</label><i class="bar"></i>
+            <div class="msg">Ingresa un correo válido</div>
+          </div>
+          <div class="field">
+            <input id="f-tel" name="telefono" type="tel" placeholder=" " autocomplete="tel" inputmode="tel" required pattern="[0-9+\s\-]{7,15}">
+            <label for="f-tel">Celular</label><i class="bar"></i>
+            <div class="msg">Ingresa un número válido</div>
+          </div>
+        </div>
+        <div class="field">
+          <input id="f-org" name="empresa" type="text" placeholder=" " autocomplete="organization">
+          <label for="f-org">Empresa / Institución (opcional)</label><i class="bar"></i>
+        </div>
+
+        <span class="choice-label mono">¿Asistirás?</span>
+        <div class="choices" id="c-asist">
+          <input type="radio" name="asistencia" id="a-si" value="Sí" required><label for="a-si">Sí, ahí estaré</label>
+          <input type="radio" name="asistencia" id="a-no" value="No"><label for="a-no">No podré asistir</label>
+        </div>
+
+        <div id="acompBlock">
+          <span class="choice-label mono">Acompañantes</span>
+          <div class="choices">
+            <input type="radio" name="acompanantes" id="p-0" value="0" checked><label for="p-0">Solo yo</label>
+            <input type="radio" name="acompanantes" id="p-1" value="1"><label for="p-1">+1</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <textarea id="f-notas" name="notas" rows="1" placeholder=" "></textarea>
+          <label for="f-notas">Restricciones alimenticias o comentarios</label><i class="bar"></i>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" name="consentimiento" id="f-consent" required>
+          <span>Autorizo a Metrored a usar mis datos para gestionar mi asistencia al evento.</span>
+        </label>
+
+        <button class="btn" type="submit" id="submitBtn"><span class="lbl">Confirmar asistencia</span> <span class="arr">→</span></button>
+        <div class="form-error" id="formError">No pudimos enviar tu confirmación. Intenta de nuevo.</div>
+      </form>
+
+      <div class="ticket-wrap" aria-live="polite">
+        <div class="done-title" id="doneTitle">¡Nos vemos ahí!</div>
+        <div class="ticket">
+          <div class="rings" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i></div>
+          <div class="t-head mono"><span>Metrored</span><span>Pase · Lanzamiento</span></div>
+          <div class="t-name" id="tName">—</div>
+          <div class="mono" style="color:rgba(255,255,255,.7)" id="tSub">Invitado</div>
+          <div class="t-perf"></div>
+          <div class="t-grid mono">
+            <div><small>Fecha</small><b>26.11.2026</b></div>
+            <div><small>Hora</small><b>10h00</b></div>
+            <div><small>Lugar</small><b>San Luis Shopping</b></div>
+          </div>
+        </div>
+        <div class="ticket-actions" id="ticketActions">
+          <button class="btn" type="button" id="icsBtn"><span>Agregar al calendario</span> <span class="arr">→</span></button>
+          <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=San+Luis+Shopping+Sangolqu%C3%AD" target="_blank" rel="noopener"><span>Cómo llegar</span> <span class="arr">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-dark>
+  <div class="foot-word" id="footWord" aria-hidden="true"></div>
+  <div class="foot-row mono">
+    <span>Metrored Centros Médicos © 2026</span>
+    <span>Grupo Hospital Metropolitano</span>
+    <span>Iñaquito | San Luis</span>
+  </div>
+</footer>
+
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN
+   RSVP_ENDPOINT: URL de un Google Apps Script (Web App) u otro
+   endpoint que acepte POST con form-data. Si está vacío, las
+   confirmaciones se guardan solo en el navegador (modo demo).
+
+   Apps Script mínimo (Extensiones → Apps Script en una Google Sheet):
+     function doPost(e) {
+       const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+       const p = e.parameter;
+       sh.appendRow([new Date(), p.nombre, p.apellido, p.email, p.telefono,
+                     p.empresa, p.asistencia, p.acompanantes, p.notas]);
+       return ContentService.createTextOutput('ok');
+     }
+   Implementar → Nueva implementación → Aplicación web → Acceso: Cualquiera.
+   ════════════════════════════════════════════════════════════════ */
+const RSVP_ENDPOINT = '';
+const EVENT_START = new Date('2026-11-26T10:00:00-05:00'); // hora Ecuador
+const EVENT_END   = new Date('2026-11-26T13:00:00-05:00'); // fin estimado
+
+/* Titulares de campaña (en primera persona: la voz del cliente) */
+const QUOTES = [
+  { t: 'La tranquilidad de agendar rápido y fácil', s: 'Nuevo Metrored Iñaquito' },
+  { t: 'Es un alivio tener un Metrored cerca de mí', s: 'Nuevo Metrored San Luis' },
+  { t: 'Merezco un servicio de salud accesible', s: 'Iñaquito | San Luis' },
+];
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(hover: hover)').matches;
+
+/* ───────── Wordmark: letras + ajuste exacto al ancho ───────── */
+function buildWord(el, text) {
+  el.innerHTML = '';
+  [...text].forEach((c, i) => {
+    const w = document.createElement('span'); w.className = 'ch';
+    const s = document.createElement('span'); s.textContent = c;
+    s.style.transitionDelay = (0.08 + i * 0.06) + 's';
+    w.appendChild(s); el.appendChild(w);
+  });
+}
+function fitWord(el) {
+  el.style.fontSize = '100px';
+  let sum = 0; el.querySelectorAll('.ch').forEach(c => sum += c.getBoundingClientRect().width);
+  el.style.fontSize = Math.floor(100 * el.clientWidth / (sum || 1)) + 'px';
+}
+const wm = document.getElementById('wordmark');
+const fw = document.getElementById('footWord');
+buildWord(wm, 'Metrored'); buildWord(fw, 'Metrored');
+// mismo texto y fuente: el pie se escala proporcionalmente al hero
+const refit = () => { fitWord(wm); fw.style.fontSize = (parseFloat(wm.style.fontSize) * fw.clientWidth / wm.clientWidth).toFixed(1) + 'px'; };
+document.fonts && document.fonts.ready.then(refit);
+addEventListener('resize', refit);
+refit();
+
+/* ───────── Arranque ───────── */
+requestAnimationFrame(() => setTimeout(() => {
+  document.body.classList.add('ready');
+  document.querySelectorAll('[data-scramble]').forEach((el, i) => setTimeout(() => scramble(el), 1500 + i * 150));
+  setTimeout(() => showQuote(0), 1300);
+}, 80));
+
+function scramble(el) {
+  if (reduced) return;
+  const final = el.textContent, chars = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789';
+  let f = 0; const total = final.length * 2;
+  const tick = () => {
+    el.textContent = [...final].map((c, i) => c === ' ' ? ' ' : (i < f / 2 ? c : chars[Math.random() * chars.length | 0])).join('');
+    if (++f <= total) requestAnimationFrame(tick); else el.textContent = final;
+  };
+  tick();
+}
+
+/* ───────── Hero: el cliente al centro (rotación de testimonios) ───────── */
+const portraits = [...document.querySelectorAll('#portrait img')];
+const quoteEl = document.getElementById('quote');
+const dotsEl = document.getElementById('dots');
+let qIdx = 0, qTimer;
+QUOTES.forEach((_, i) => {
+  const b = document.createElement('button');
+  b.setAttribute('aria-label', 'Testimonio ' + (i + 1));
+  b.addEventListener('click', () => goQuote(i));
+  dotsEl.appendChild(b);
+});
+function renderQuote(q) {
+  quoteEl.innerHTML = q.t.split(' ').map((w, i) =>
+    `<span class="w"><span style="transition-delay:${(i * 0.05).toFixed(2)}s">${w}</span></span>`).join(' ')
+    + `<small>${q.s}</small>`;
+}
+function showQuote(i) {
+  qIdx = i;
+  renderQuote(QUOTES[i]);
+  quoteEl.classList.remove('hide');
+  requestAnimationFrame(() => requestAnimationFrame(() => quoteEl.classList.add('show')));
+  portraits.forEach((p, k) => { p.classList.toggle('prev', p.classList.contains('on') && k !== i); p.classList.toggle('on', k === i); });
+  [...dotsEl.children].forEach((d, k) => d.classList.toggle('on', k === i));
+  clearTimeout(qTimer);
+  if (!reduced) qTimer = setTimeout(() => goQuote((qIdx + 1) % QUOTES.length), 4800);
+}
+function goQuote(i) {
+  if (i === qIdx && quoteEl.classList.contains('show')) return;
+  quoteEl.classList.remove('show'); quoteEl.classList.add('hide');
+  setTimeout(() => showQuote(i), 520);
+}
+
+/* ───────── Túnel: anillos en profundidad guiados por el scroll ───────── */
+const tunnel = document.getElementById('centro');
+const tRingsEl = document.getElementById('tRings');
+const N_RINGS = 9;
+const tRings = Array.from({ length: N_RINGS }, () => { const d = document.createElement('div'); d.className = 't-ring'; tRingsEl.appendChild(d); return d; });
+const tLines = [...document.querySelectorAll('.t-line')];
+const tCoreImgs = [...document.querySelectorAll('#tCore img')];
+const tCore = document.getElementById('tCore');
+const tPct = document.getElementById('tPct');
+let tStep = -1;
+function updateTunnel(time) {
+  const r = tunnel.getBoundingClientRect();
+  const total = r.height - innerHeight;
+  const p = Math.min(1, Math.max(0, -r.top / total));
+  // cada anillo viaja desde el fondo (pequeño) hacia el frente (gigante); el tiempo los mantiene vivos
+  const flow = p * 3 + (reduced ? 0 : time * 0.00004);
+  tRings.forEach((ring, i) => {
+    const d = ((i / N_RINGS + flow) % 1 + 1) % 1;       // 0 = fondo, 1 = frente
+    const s = 0.12 * Math.pow(22, d);                    // crecimiento exponencial = sensación de profundidad
+    const o = d < .08 ? d / .08 : d > .8 ? (1 - d) / .2 : 1;
+    ring.style.transform = `scale(${s.toFixed(4)})`;
+    ring.style.opacity = o.toFixed(3);
+    ring.style.zIndex = Math.round(d * 10);
+  });
+  tCore.style.transform = `scale(${(0.85 + Math.sin(p * Math.PI) * 0.25).toFixed(3)})`;
+  const step = Math.min(tLines.length - 1, Math.floor(p * tLines.length * 0.999));
+  if (step !== tStep) {
+    tLines.forEach((l, k) => { l.classList.toggle('on', k === step); l.classList.toggle('past', k < step); });
+    tCoreImgs.forEach((im, k) => im.classList.toggle('on', k === Math.min(step, tCoreImgs.length - 1) % tCoreImgs.length));
+    tStep = step;
+  }
+  tPct.textContent = String(Math.round(p * 100)).padStart(2, '0');
+}
+
+/* ───────── Marquees, parallax de círculos, scroll ───────── */
+const tracks = [...document.querySelectorAll('.marquee-track')];
+tracks.forEach(t => { t.innerHTML = t.innerHTML.repeat(6); });
+const offs = tracks.map(() => 0);
+let lastY = scrollY, vel = 0;
+const rings = [...document.querySelectorAll('.stage .ring')];
+let mx = 0, my = 0, cx = 0, cy = 0;
+if (finePointer) addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
+
+const topbar = document.querySelector('.topbar');
+const darkSecs = [...document.querySelectorAll('[data-dark]')];
+function loop(time) {
+  const y = scrollY;
+  topbar.classList.toggle('dark', darkSecs.some(sec => { const r = sec.getBoundingClientRect(); return r.top <= 30 && r.bottom > 30; })); vel += ((y - lastY) - vel) * 0.1; lastY = y;
+
+  if (!reduced) {
+    // círculos del hero: cada capa a distinta profundidad (puntero + respiración + scroll)
+    const idle = finePointer ? 0 : 1;
+    const ax = mx + idle * Math.sin(time * 0.0004) * .25, ay = my + idle * Math.cos(time * 0.0005) * .25;
+    cx += (ax - cx) * 0.06; cy += (ay - cy) * 0.06;
+    if (y < innerHeight * 1.2) {
+      const sp = y / innerHeight;
+      rings.forEach(r => {
+        const d = +r.dataset.depth;
+        r.style.transform = `translate3d(${(cx * d).toFixed(2)}px, ${(cy * d + sp * d * 2.2).toFixed(2)}px, 0) scale(${(1 + sp * d / 120).toFixed(4)})`;
+      });
+      wm.style.transform = `translateY(${(sp * -40).toFixed(1)}px)`;
+    }
+    tracks.forEach((t, i) => {
+      offs[i] -= +t.dataset.speed * (1 + Math.abs(vel) * 0.25);
+      const w = t.scrollWidth / 6;
+      if (offs[i] <= -w) offs[i] += w;
+      if (offs[i] > 0) offs[i] -= w;
+      t.style.transform = `translate3d(${offs[i]}px,0,0) skewX(${Math.max(-12, Math.min(12, -vel * 0.4))}deg)`;
+    });
+  }
+  const tr = tunnel.getBoundingClientRect();
+  if (tr.bottom > 0 && tr.top < innerHeight) updateTunnel(time);
+  requestAnimationFrame(loop);
+}
+updateTunnel(0);
+requestAnimationFrame(loop);
+
+/* ───────── Reveal on scroll ───────── */
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv, [data-in]').forEach(el => io.observe(el));
+
+/* ───────── Tilt y botones magnéticos ───────── */
+if (finePointer && !reduced) {
+  document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5, yy = (e.clientY - r.top) / r.height - .5;
+      card.style.transform = `perspective(1000px) rotateY(${x * 6}deg) rotateX(${-yy * 6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('pointerleave', () => card.style.transform = '');
+  });
+  document.querySelectorAll('.btn, .cta-mini').forEach(b => {
+    b.addEventListener('pointermove', e => {
+      const r = b.getBoundingClientRect();
+      b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .15}px, ${(e.clientY - r.top - r.height / 2) * .25}px)`;
+    });
+    b.addEventListener('pointerleave', () => b.style.transform = '');
+  });
+}
+
+/* ───────── Cuenta regresiva ───────── */
+const cdEls = {};
+['d', 'h', 'm', 's'].forEach(k => cdEls[k] = document.querySelector(`[data-cd="${k}"]`));
+function tickCd() {
+  let ms = Math.max(0, EVENT_START - Date.now());
+  const d = Math.floor(ms / 864e5); ms -= d * 864e5;
+  const h = Math.floor(ms / 36e5);  ms -= h * 36e5;
+  const m = Math.floor(ms / 6e4);   ms -= m * 6e4;
+  const s = Math.floor(ms / 1e3);
+  const pad = n => String(n).padStart(2, '0');
+  cdEls.d.textContent = pad(d); cdEls.h.textContent = pad(h);
+  cdEls.m.textContent = pad(m); cdEls.s.textContent = pad(s);
+}
+tickCd(); setInterval(tickCd, 1000);
+
+/* ───────── RSVP ───────── */
+const form = document.getElementById('rsvpForm');
+const card = document.getElementById('rsvpCard');
+const acompBlock = document.getElementById('acompBlock');
+form.addEventListener('change', e => {
+  if (e.target.name === 'asistencia') {
+    acompBlock.style.display = e.target.value === 'No' ? 'none' : '';
+    document.getElementById('c-asist').classList.remove('err');
+  }
+});
+form.querySelectorAll('input, textarea').forEach(i => i.addEventListener('input', () => i.closest('.field')?.classList.remove('err')));
+const ta = document.getElementById('f-notas');
+ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; });
+
+function validate() {
+  let ok = true, first = null;
+  form.querySelectorAll('.field input[required]').forEach(inp => {
+    const bad = !inp.value.trim() || !inp.checkValidity();
+    inp.closest('.field').classList.toggle('err', bad);
+    if (bad) { ok = false; first = first || inp; }
+  });
+  const asist = form.querySelector('input[name="asistencia"]:checked');
+  document.getElementById('c-asist').classList.toggle('err', !asist);
+  if (!asist) { ok = false; first = first || document.getElementById('a-si'); }
+  const consent = document.getElementById('f-consent');
+  consent.parentElement.style.color = consent.checked ? '' : 'var(--error)';
+  if (!consent.checked) { ok = false; first = first || consent; }
+  if (first) first.focus();
+  return ok;
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!validate()) return;
+  const btn = document.getElementById('submitBtn');
+  const err = document.getElementById('formError');
+  err.style.display = 'none';
+  btn.disabled = true; btn.querySelector('.lbl').textContent = 'Enviando…';
+
+  const data = new FormData(form);
+  if (data.get('asistencia') === 'No') data.set('acompanantes', '0');
+  data.append('fecha_registro', new Date().toISOString());
+
+  try {
+    if (RSVP_ENDPOINT) {
+      await fetch(RSVP_ENDPOINT, { method: 'POST', body: data, mode: 'no-cors' });
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem('metrored_rsvp') || '[]');
+        list.push(Object.fromEntries(data)); localStorage.setItem('metrored_rsvp', JSON.stringify(list));
+      } catch (_) {}
+      await new Promise(r => setTimeout(r, 700));
+    }
+    showTicket(data);
+  } catch (_) {
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.querySelector('.lbl').textContent = 'Confirmar asistencia';
+  }
+});
+
+function showTicket(data) {
+  const yes = data.get('asistencia') === 'Sí';
+  document.getElementById('tName').textContent = `${data.get('nombre')} ${data.get('apellido')}`.trim();
+  document.getElementById('tSub').textContent = yes ? (data.get('acompanantes') === '1' ? 'Invitado + 1' : 'Invitado') : 'Gracias por avisarnos';
+  document.getElementById('doneTitle').textContent = yes ? '¡Nos vemos ahí!' : 'Te vamos a extrañar';
+  document.getElementById('ticketActions').style.display = yes ? '' : 'none';
+  card.classList.add('done');
+  card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  if (yes && !reduced) bubbles();
+}
+
+/* ───────── .ics para calendario ───────── */
+document.getElementById('icsBtn').addEventListener('click', () => {
+  const f = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Metrored//Lanzamiento//ES', 'BEGIN:VEVENT',
+    'UID:lanzamiento-inaquito-sanluis-20261126@metrored',
+    'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(EVENT_START), 'DTEND:' + f(EVENT_END),
+    'SUMMARY:Lanzamiento Metrored Iñaquito y San Luis',
+    'LOCATION:San Luis Shopping\\, Sangolquí\\, Ecuador',
+    'DESCRIPTION:Vestimenta: smart casual. Te recomendamos llegar 15 minutos antes.',
+    'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', 'DESCRIPTION:Lanzamiento Metrored', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  a.download = 'lanzamiento-metrored.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+/* ───────── Celebración: burbujas/círculos que suben ───────── */
+function bubbles() {
+  const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+  const dpr = devicePixelRatio || 1;
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = ['22,134,242', '110,220,255', '109,195,252', '255,255,255', '7,42,82'];
+  const ps = Array.from({ length: 70 }, () => ({
+    x: Math.random() * innerWidth, y: innerHeight + Math.random() * innerHeight * .6,
+    r: Math.random() * 26 + 6, vy: Math.random() * 3 + 2.2, w: Math.random() * 6.28,
+    c: cols[Math.random() * cols.length | 0], ring: Math.random() > .5
+  }));
+  let t = 0;
+  (function draw() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ps.forEach(p => {
+      p.y -= p.vy; p.w += .04; const x = p.x + Math.sin(p.w) * 18;
+      const a = Math.max(0, Math.min(1, p.y / innerHeight)) * .85;
+      ctx.beginPath(); ctx.arc(x, p.y, p.r, 0, 6.283);
+      if (p.ring) { ctx.lineWidth = 3; ctx.strokeStyle = `rgba(${p.c},${a})`; ctx.stroke(); }
+      else { ctx.fillStyle = `rgba(${p.c},${a * .8})`; ctx.fill(); }
+    });
+    if (++t < 320) requestAnimationFrame(draw); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  })();
+}
+</script>
+</body>
+</html>
