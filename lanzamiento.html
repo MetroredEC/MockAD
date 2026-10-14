@@ -97,6 +97,10 @@
   .journey { position: relative; }               /* alto calculado en JS */
   .snap { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; pointer-events: none; }
   html.snapping { scroll-snap-type: y proximity; }
+  /* Lenis */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
   .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; }
   .scene {
     position: absolute; inset: 0;
@@ -421,12 +425,12 @@
   <section class="scene hero" aria-label="Lanzamiento Metrored Iñaquito y San Luis">
       <canvas id="lens" aria-hidden="true"></canvas>
       <div class="hero-copy" id="heroCopy">
-        <span class="pill-label label fade" style="--d:.9s"><i></i>Lanzamiento oficial</span>
+        <span class="pill-label label fade" style="--d:.9s" id="heroPill"><i></i>Lanzamiento oficial</span>
         <h1>
           <span class="line" style="--i:0"><span>Un Metrored</span></span>
           <span class="line" style="--i:1"><span><strong>cerca de ti.</strong></span></span>
         </h1>
-        <p class="hero-sub fade" style="--d:1.5s">Nuevo Metrored Iñaquito &amp; San Luis</p>
+        <p class="hero-sub fade" style="--d:1.5s" id="heroSub">Nuevo Metrored Iñaquito &amp; San Luis</p>
         <div class="dive-hint label fade" style="--d:1.9s"><span class="ping" aria-hidden="true"></span>Desliza para entrar</div>
       </div>
 
@@ -511,12 +515,12 @@
   </section>
 
   <!-- CAPA 4 · RSVP (el fondo del viaje; si no cabe, se desplaza dentro de la capa) -->
-  <section class="scene scene-rsvp" id="sRsvp" aria-label="Confirmar asistencia">
+  <section class="scene scene-rsvp" id="sRsvp" aria-label="Confirmar asistencia" data-lenis-prevent>
   <div class="rsvp" id="rsvp" aria-labelledby="rsvp-t">
     <div class="rsvp-intro">
       <div class="label reveal fade">RSVP</div>
       <h2 id="rsvp-t" class="reveal">
-        <span class="line"><span>Confirma tu</span></span>
+        <span class="line"><span id="rsvpLead">Confirma tu</span></span>
         <span class="line"><span><strong>asistencia.</strong></span></span>
       </h2>
       <p class="reveal fade">Cupos limitados. Reserva tu lugar completando el formulario.</p>
@@ -557,6 +561,7 @@
 
       <div class="field"><textarea id="f-x" name="notas" rows="1" placeholder=" "></textarea><label for="f-x">Restricciones alimenticias o comentarios</label></div>
 
+      <input type="hidden" name="invitacion" id="f-inv" value="">
       <!-- campo trampa anti-spam: invisible para personas; si llega lleno, el script lo descarta -->
       <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>No llenar<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
 
@@ -607,6 +612,7 @@
  </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
 <script>
 /* ════════════════════════════════════════════════════════════════
    CONFIGURACIÓN
@@ -621,6 +627,7 @@
 const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxtpehvnTBQKWRDq-5XfRGaiynATDDLiukSqNgCdHrvfbVKLxNDCDkuaEUyqnr97dZIEw/exec';
 const EVENT_START = new Date('2026-11-26T10:00:00-05:00'); // hora Ecuador
 const EVENT_END   = new Date('2026-11-26T13:00:00-05:00'); // fin estimado
+const CONFIRM_EMAIL = false;   // true cuando el Apps Script envía el correo de confirmación
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover)').matches;
@@ -797,7 +804,6 @@ function layout() {
   if (!flat) seg.forEach(g => { const m = document.createElement('i'); m.className = 'snap'; m.style.top = (g.s1 * unit) + 'px'; journey.appendChild(m); });
 }
 layout(); addEventListener('resize', layout);
-setTimeout(() => !flat && document.documentElement.classList.add('snapping'), 1500);
 
 const ease2 = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 const voices = [...document.querySelectorAll('.voice')];
@@ -894,7 +900,38 @@ function updateJourney() {
   topbar.classList.toggle('scrolled', cur >= 1 && !dark);
 }
 
+/* ═════════ Scroll suavizado (inercia de cámara) ═════════
+   Lenis suaviza la rueda/trackpad; en táctil se mantiene el scroll nativo.
+   "Asentar": si el usuario se detiene a mitad de una transición, la cámara
+   avanza o retrocede suavemente a la capa más cercana. */
+const lenis = (!flat && window.Lenis) ? new Lenis({ lerp: .085, wheelMultiplier: .9, smoothWheel: true }) : null;
+let lastMove = performance.now(), settling = false;
+if (lenis) lenis.on('scroll', () => { if (!settling) lastMove = performance.now(); });
+else addEventListener('scroll', () => { if (!settling) lastMove = performance.now(); }, { passive: true });
+function scrollToY(y, dur) {
+  if (lenis) lenis.scrollTo(y, { duration: dur, easing: x => 1 - Math.pow(1 - x, 4), force: true });
+  else scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+}
+function settle(now) {
+  if (flat || settling || now - lastMove < 260) return;
+  if (lenis && Math.abs(lenis.velocity) > .05) return;
+  const pos = scrollY / unit;
+  for (let k = 1; k < seg.length; k++) {
+    const g = seg[k];
+    if (pos > g.s0 + .02 && pos < g.s1 - .02) {
+      const t = (pos - g.s0) / (g.s1 - g.s0);
+      const target = (t > .45 ? g.s1 + .001 : g.s0 - .001) * unit;
+      settling = true;
+      scrollToY(target, 1.1);
+      setTimeout(() => { settling = false; lastMove = performance.now(); }, 1200);
+      return;
+    }
+  }
+}
+
 function frame(now) {
+  if (lenis) lenis.raf(now);
+  if (!flat) settle(now);
   if (flat) { drawHero(now); }
   else {
     updateJourney();
@@ -907,7 +944,9 @@ requestAnimationFrame(frame);
 /* Ir a una capa: la cámara recorre el túnel hasta su pausa */
 function goTo(k) {
   const top = flat ? scenes[k].offsetTop : (k === scenes.length - 1 ? TOTAL : seg[k].s1 + .001) * unit;
-  scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+  // la duración crece con la distancia: la cámara recorre el túnel sin saltos
+  const dist = Math.abs(top - scrollY) / unit;
+  if (flat) scrollTo({ top }); else scrollToY(top, Math.min(3.2, .9 + dist * .38));
 }
 dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.go)));
 
@@ -973,6 +1012,24 @@ const form = document.getElementById('form');
 const rsvp = document.getElementById('rsvp');
 const gAcomp = document.getElementById('g-acomp');
 const consent = document.getElementById('consent');
+/* ═════════ Invitación personalizada ═════════
+   ?n=Nombre&a=Apellido  →  saludo con nombre, formulario pre-llenado y
+   registro del link usado (columna Invitación en la Sheet). */
+const qs = new URLSearchParams(location.search);
+const clean = v => (v || '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+const guest = clean(qs.get('n')), guestLast = clean(qs.get('a'));
+if (guest) {
+  document.getElementById('heroPill').lastChild.textContent = 'Invitación personal';
+  document.getElementById('heroSub').textContent = guest + ', te esperamos en el lanzamiento';
+  document.getElementById('rsvpLead').textContent = guest + ', confirma tu';
+  document.getElementById('f-inv').value = (guest + ' ' + guestLast).trim();
+  for (const [id, v] of [['f-n', guest], ['f-a', guestLast]]) {
+    const el = document.getElementById(id);
+    if (v) { el.value = v; el.closest('.field').classList.add('valid'); }
+  }
+  document.title = guest + ' · Lanzamiento Metrored Iñaquito & San Luis';
+}
+
 const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
 
 form.addEventListener('change', e => {
@@ -1047,7 +1104,8 @@ function done(data) {
   t.textContent = yes ? 'Te esperamos, ' : 'Gracias por avisarnos, ';
   const s = document.createElement('strong'); s.textContent = name + '.'; t.appendChild(s);
   document.getElementById('done-p').textContent = yes
-    ? (data.get('acompanantes') === '1' ? 'Tu asistencia y la de tu acompañante están confirmadas.' : 'Tu asistencia está confirmada.') + ' Guarda la fecha en tu calendario.'
+    ? (data.get('acompanantes') === '1' ? 'Tu asistencia y la de tu acompañante están confirmadas.' : 'Tu asistencia está confirmada.')
+      + (CONFIRM_EMAIL ? ' Te enviamos los detalles a ' + data.get('email') + '.' : ' Guarda la fecha en tu calendario.')
     : 'Lamentamos que no puedas acompañarnos. Te esperamos pronto en Metrored Iñaquito y San Luis.';
   document.getElementById('pass').style.display = yes ? '' : 'none';
   document.getElementById('done-actions').style.display = yes ? '' : 'none';
