@@ -487,12 +487,73 @@
     .share { grid-template-columns: 1fr 112px; gap: 16px; }
   }
 
+
+  /* ═════════ Capa extra de diseño ═════════ */
+  /* Voces: lente de vidrio con anillos que viajan hacia el centro */
+  .voices { background: linear-gradient(180deg, #f2fbff 0%, #fff 70%); }
+  .vorb { position: absolute; right: -16vmin; top: 50%; width: 82vmin; aspect-ratio: 1; transform: translateY(-50%); pointer-events: none; }
+  .vorb i { position: absolute; inset: calc(var(--k) * 12%); border-radius: 50%; background: linear-gradient(180deg, rgba(150,237,254,.34), rgba(95,203,241,.14)); box-shadow: inset 0 1.5px 0 rgba(255,255,255,.95), inset 0 -14px 30px -20px rgba(18,112,212,.35); }
+  .vorb .p { inset: 0; background: none; box-shadow: none; border: 1px solid rgba(22,134,242,.28); opacity: 0; animation: inwardRing 7.5s var(--ease-io) infinite; animation-delay: calc(var(--k) * -2.5s); }
+  @keyframes inwardRing { 0% { transform: scale(1); opacity: 0; } 18% { opacity: 1; } 100% { transform: scale(.1); opacity: 0; } }
+  .vorb b { position: absolute; inset: 0; margin: auto; width: 14px; height: 14px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 12px rgba(22,134,242,.12), 0 0 0 30px rgba(22,134,242,.05); }
+  .voices-in { position: relative; }
+
+  /* Sedes: dos lentes de vidrio que se cruzan (dos sedes, un mismo centro) */
+  .sedes { display: flex; justify-content: center; align-items: center; gap: 0; }
+  .sede { width: min(40vw, 58svh); aspect-ratio: 1; min-height: 0; border-radius: 50%; padding: 0 9%; justify-content: center; align-items: center; text-align: center; gap: 0;
+    background: linear-gradient(180deg, rgba(150,237,254,.42) 0%, rgba(118,216,253,.24) 55%, rgba(95,203,241,.16) 100%);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.95), inset 0 -18px 40px -24px rgba(18,112,212,.4); }
+  .sede + .sede { margin-left: -4%; }
+  .sede:hover { box-shadow: inset 0 2px 0 rgba(255,255,255,.95), inset 0 -18px 40px -24px rgba(18,112,212,.5), 0 40px 80px -50px rgba(18,112,212,.55); }
+  .sede .discs { inset: 0; right: auto; top: auto; width: 100%; }
+  .sede .discs i { background: none; border: 1px solid rgba(22,134,242,.12); }
+  .sede .discs i:last-child { display: none; }
+  .sede h3 { margin-top: 14px; font-size: clamp(28px, 2.8vw, 44px); }
+  .sede p { justify-content: center; }
+  .sede .go { position: static; margin-top: 22px; }
+  .sedes-in > .label { margin-bottom: clamp(12px, 2.4vh, 24px); }
+
+  /* RSVP: pase de invitación que se completa en vivo */
+  .ticket { position: relative; margin-top: 36px; width: 100%; max-width: 440px; aspect-ratio: 1.62; border-radius: 26px; padding: 24px 26px; color: #fff; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between;
+    background: linear-gradient(145deg, #34a0fb 0%, #1686f2 42%, #0f5fc2 100%);
+    box-shadow: 0 44px 70px -40px rgba(12,47,92,.75), inset 0 1px 0 rgba(255,255,255,.35);
+    transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .7s var(--ease); }
+  .ticket .rings { position: absolute; z-index: -1; right: -26%; top: -46%; width: 92%; aspect-ratio: 1; }
+  .ticket .rings i { position: absolute; inset: calc(var(--k) * 14%); border-radius: 50%; background: linear-gradient(180deg, rgba(150,237,254,.22), rgba(255,255,255,.03)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+  .ticket .glare { position: absolute; inset: 0; z-index: -1; background: radial-gradient(420px circle at var(--gx, 20%) var(--gy, 0%), rgba(255,255,255,.28), transparent 55%); pointer-events: none; }
+  .ticket .t-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .ticket .t-top img { height: 30px; width: auto; display: block; }
+  .ticket .t-top .label { color: #fff; opacity: .75; }
+  .ticket .t-name small { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
+  .ticket .t-name div { margin-top: 6px; font-size: clamp(22px, 2.1vw, 30px); font-weight: 500; letter-spacing: -.025em; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .3s; }
+  .ticket .t-name div.ph { opacity: .45; font-weight: 300; }
+  .ticket .t-row { position: relative; display: grid; grid-template-columns: auto auto 1fr; gap: 22px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,.35); font-size: 13.5px; }
+  .ticket .t-row::before, .ticket .t-row::after { content: ""; position: absolute; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: #fff; }
+  .ticket .t-row::before { left: -37px; } .ticket .t-row::after { right: -37px; }
+  .ticket .t-row span { display: grid; gap: 4px; }
+  .ticket .t-row small { font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; opacity: .65; }
+  .ticket .stamp { position: absolute; right: 24px; top: 46%; padding: 7px 14px; border: 1.5px solid #fff; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; transform: rotate(-8deg) scale(0); opacity: 0; transition: transform .7s var(--spring) .4s, opacity .3s .4s; }
+  .ticket.ok .stamp { transform: rotate(-8deg) scale(1); opacity: 1; }
+  @media (max-width: 900px) { .ticket { max-width: 460px; } }
+  @media (max-width: 640px) {
+    .vorb { right: -38vw; top: auto; bottom: 4%; transform: none; width: 92vw; opacity: .7; }
+    .sedes { flex-direction: column; }
+    .sede { width: min(76vw, 33svh); padding: 0 11%; }
+    .sede + .sede { margin: -5% 0 0; }
+    .sede h3 { font-size: 24px; margin-top: 8px; }
+    .sede p { font-size: 12.5px; margin-top: 8px; }
+    .sede .label { font-size: 9.5px; }
+    .sede .go { width: 36px; height: 36px; margin-top: 10px; }
+    .ticket { margin-top: 26px; padding: 20px 22px; }
+    .ticket .t-row { gap: 16px; font-size: 12.5px; }
+  }
+
   /* ───────── Responsive ───────── */
   @media (min-width: 641px) {
     .event .scene-body { padding-right: calc(var(--gutter) + 56px); }
   }
   @media (max-width: 900px) {
-    .rsvp, .sedes { grid-template-columns: 1fr; }
+    .rsvp { grid-template-columns: 1fr; }
     .facts { grid-template-columns: 1fr 1fr; }
     .fact:nth-child(3) { padding-left: 0; border-left: 0; }
     .fact:nth-child(n+3) { margin-top: 26px; border-top: 1px solid rgba(255,255,255,.25); }
@@ -520,8 +581,6 @@
     .countdown { margin-top: 24px; }
     .countdown > span { padding: 0 14px; }
     .voices-in, .sedes-in { padding-bottom: 100px; }
-    .sede { min-height: 0; gap: 26px; }
-    .sede .discs { width: 40%; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
@@ -604,6 +663,7 @@
 
   <!-- CAPA 1 · VOCES DE CAMPAÑA (aparece dentro del núcleo del hero) -->
   <section class="scene voices" aria-label="Pensado alrededor de ti">
+   <div class="vorb" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i class="p" style="--k:0"></i><i class="p" style="--k:1"></i><i class="p" style="--k:2"></i><b></b></div>
    <div class="scene-body">
     <div class="voices-in">
       <div class="label chap"><b>02</b><em>Pensado alrededor de ti</em></div>
@@ -679,11 +739,14 @@
         <span class="line"><span><strong>asistencia.</strong></span></span>
       </h2>
       <p class="reveal fade">Cupos limitados. Reserva tu lugar completando el formulario.</p>
-      <div class="mini reveal fade">
-        <div><i></i>Jueves 26 de noviembre · 10h00</div>
-        <div><i></i>San Luis Shopping</div>
-        <div><i></i>Vestimenta smart casual</div>
-      </div>
+      <div class="reveal fade"><div class="ticket" id="ticket" aria-hidden="true">
+        <div class="rings"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i></div>
+        <div class="glare"></div>
+        <div class="t-top"><img src="assets/metrored-logo-white.png" alt="" width="452" height="136"><span class="label">Invitación</span></div>
+        <div class="t-name"><small>Invitado</small><div id="tkName" class="ph">Tu nombre</div></div>
+        <div class="t-row"><span><small>Fecha</small>26.11.2026</span><span><small>Hora</small>10h00</span><span><small>Lugar</small>San Luis Shopping</span></div>
+        <span class="stamp" id="tkStamp">Confirmado</span>
+      </div></div>
     </div>
 
     <form class="form reveal fade" id="form" novalidate>
@@ -1282,6 +1345,24 @@ form.querySelectorAll('.field input, .field textarea').forEach(i => {
   const f = i.closest('.field');
   i.addEventListener('input', () => { f.classList.remove('err'); if (i.required) f.classList.toggle('valid', !!i.value.trim() && i.checkValidity()); });
 });
+/* Pase de invitación: se completa en vivo con el nombre */
+const ticket = document.getElementById('ticket'), tkName = document.getElementById('tkName');
+function syncTicket() {
+  const n = (document.getElementById('f-n').value + ' ' + document.getElementById('f-a').value).replace(/\s+/g, ' ').trim();
+  tkName.textContent = n || 'Tu nombre'; tkName.classList.toggle('ph', !n);
+}
+['f-n', 'f-a'].forEach(id => document.getElementById(id).addEventListener('input', syncTicket));
+syncTicket();
+if (finePointer && !reduced) {
+  ticket.addEventListener('pointermove', e => {
+    const r = ticket.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    ticket.style.setProperty('--ry', ((x - .5) * 10).toFixed(2) + 'deg');
+    ticket.style.setProperty('--rx', ((.5 - y) * 8).toFixed(2) + 'deg');
+    ticket.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+    ticket.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+  });
+  ticket.addEventListener('pointerleave', () => { ticket.style.setProperty('--rx', '0deg'); ticket.style.setProperty('--ry', '0deg'); });
+}
 const ta = document.getElementById('f-x');
 ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; });
 
@@ -1355,6 +1436,7 @@ function done(data) {
   document.getElementById('pass').style.display = yes ? '' : 'none';
   document.getElementById('done-actions').style.display = yes ? '' : 'none';
   rsvp.classList.add('sent');
+  if (yes || wait) { document.getElementById('tkStamp').textContent = yes ? 'Confirmado' : 'Lista de espera'; ticket.classList.add('ok'); }
   if (window.onConfirmed) window.onConfirmed(data, yes);
   const host = document.getElementById('sRsvp');
   if (flat) rsvp.scrollIntoView({ block: 'start' }); else host.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
