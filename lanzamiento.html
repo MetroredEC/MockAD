@@ -45,10 +45,12 @@
 
   .label { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
 
-  /* Logotipo de texto (reemplazar por el SVG oficial cuando esté disponible) */
-  .logo { display: inline-flex; flex-direction: column; line-height: 1; }
-  .logo strong { font-weight: 600; font-size: 19px; letter-spacing: -.02em; }
-  .logo small { font-weight: 400; font-size: 9.5px; letter-spacing: .12em; margin-top: 3px; opacity: .8; }
+  /* Logotipo oficial (versión azul para fondos claros, blanca para fondos azules) */
+  .logo { display: inline-flex; line-height: 0; }
+  .logo img { display: block; height: 38px; width: auto; }
+  .logo .on-dark { display: none; }
+  .topbar.dark .logo .on-light { display: none; }
+  .topbar.dark .logo .on-dark { display: block; }
 
   /* Micro interacción compartida: brillo que sigue al puntero */
   .glow { position: relative; overflow: hidden; isolation: isolate; }
@@ -138,8 +140,7 @@
   .band-inner .meta .label { opacity: .7; font-size: 10.5px; }
   .band-inner .center { justify-self: center; }
   .band-inner .logo { justify-self: end; align-items: flex-end; }
-  .band-inner .logo strong { font-size: clamp(24px, 2.6vw, 38px); }
-  .band-inner .logo small { font-size: 11px; }
+  .band-inner .logo img { height: clamp(44px, 4.6vw, 66px); }
 
   .btn-white { display: inline-flex; align-items: center; gap: 12px; padding: 13px 14px 13px 24px; border-radius: 99px; background: #fff; color: var(--blue-deep); font-weight: 500; font-size: 15px; box-shadow: 0 10px 30px -10px rgba(5,40,90,.45); transition: transform .6s var(--ease), box-shadow .6s var(--ease); }
   .btn-white .arr { width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; transition: transform .6s var(--spring); }
@@ -388,7 +389,7 @@
 <body>
 
 <header class="topbar" id="topbar">
-  <a href="#top" class="logo"><strong>Metrored</strong><small>Centros Médicos</small></a>
+  <a href="#top" class="logo" aria-label="Metrored Centros Médicos — inicio"><img class="on-light" src="assets/metrored-logo-blue.png" alt="Metrored Centros Médicos" width="452" height="136"><img class="on-dark" src="assets/metrored-logo-white.png" alt="" width="452" height="136"></a>
   <a href="#rsvp" class="cta magnetic"><i></i>Confirmar asistencia</a>
 </header>
 
@@ -425,7 +426,7 @@
           <div class="band-inner">
             <div class="meta"><span class="label">Nuevo Metrored</span><span>Iñaquito &nbsp;·&nbsp; San Luis</span></div>
             <div class="center"><a class="btn-white glow magnetic" href="#rsvp">Jueves 26.11 · 10h00 <span class="arr" aria-hidden="true">→</span></a></div>
-            <div class="logo"><strong>Metrored</strong><small>Centros Médicos</small></div>
+            <div class="logo"><img src="assets/metrored-logo-white.png" alt="Metrored Centros Médicos" width="452" height="136"></div>
           </div>
         </div>
       </div>
@@ -543,6 +544,9 @@
 
       <div class="field"><textarea id="f-x" name="notas" rows="1" placeholder=" "></textarea><label for="f-x">Restricciones alimenticias o comentarios</label></div>
 
+      <!-- campo trampa anti-spam: invisible para personas; si llega lleno, el script lo descarta -->
+      <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>No llenar<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
       <label class="consent" id="consent"><input type="checkbox" name="consentimiento" id="f-c"><span>Autorizo a Metrored a usar mis datos para gestionar mi asistencia al evento.</span></label>
 
       <div class="submit-wrap">
@@ -580,7 +584,7 @@
     <path d="M0,60 C360,0 820,-6 1440,45 L1440,200 L0,200 Z" fill="url(#footG)"/>
   </svg>
   <div class="foot">
-    <div class="logo"><strong>Metrored</strong><small>Centros Médicos</small></div>
+    <div class="logo"><img src="assets/metrored-logo-white.png" alt="Metrored Centros Médicos" width="452" height="136" style="height:44px"></div>
     <div class="meta"><span>Nuevo Metrored Iñaquito: Av. Juan Diguja y Vozandes</span><span>Grupo Hospital Metropolitano</span></div>
   </div>
 </footer>
@@ -597,14 +601,8 @@
    endpoint que acepte POST con form-data. Si está vacío, las
    confirmaciones se guardan solo en el navegador (modo demo).
 
-   Apps Script mínimo (Extensiones → Apps Script en una Google Sheet):
-     function doPost(e) {
-       const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-       const p = e.parameter;
-       sh.appendRow([new Date(), p.nombre, p.apellido, p.email, p.telefono,
-                     p.empresa, p.asistencia, p.acompanantes, p.notas]);
-       return ContentService.createTextOutput('ok');
-     }
+   El script vive dentro de la Google Sheet "RSVP · Lanzamiento Metrored"
+   (Extensiones → Apps Script). Ver instrucciones en el chat del proyecto.
    Implementar → Nueva implementación → Aplicación web → Acceso: Cualquiera.
    ════════════════════════════════════════════════════════════════ */
 const RSVP_ENDPOINT = '';
@@ -1012,7 +1010,8 @@ form.addEventListener('submit', async e => {
   const started = Date.now();
   try {
     if (RSVP_ENDPOINT) {
-      await fetch(RSVP_ENDPOINT, { method: 'POST', body: data, mode: 'no-cors' });
+      // urlencoded = petición simple: el Apps Script la recibe completa en e.parameter
+      await fetch(RSVP_ENDPOINT, { method: 'POST', body: new URLSearchParams(data), mode: 'no-cors' });
     } else {
       try {
         const list = JSON.parse(localStorage.getItem('metrored_rsvp') || '[]');
