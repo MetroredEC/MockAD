@@ -76,12 +76,37 @@
   .topbar.dark .cta:hover { background: #fff; border-color: #fff; color: var(--blue); }
   .topbar.dark .cta:hover i { background: var(--blue); }
 
-  /* ═════════ HERO con inmersión: el scroll entra en el círculo ═════════ */
-  .hero-track { position: relative; height: 230vh; }
+  /* ═════════ VIAJE EN PROFUNDIDAD ═════════
+     La pantalla queda fija y el scroll mueve la cámara hacia adentro:
+     cada escena aparece dentro de un círculo y crece hasta llenar la vista. */
+  .journey { position: relative; }               /* alto calculado en JS */
+  .snap { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; pointer-events: none; }
+  html.snapping { scroll-snap-type: y proximity; }
+  .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; }
+  .scene {
+    position: absolute; inset: 0;
+    visibility: hidden; pointer-events: none;
+    overflow: hidden; overscroll-behavior: auto;
+    will-change: transform, clip-path, opacity, filter;
+  }
+  .scene.vis { visibility: visible; }
+  .scene.active { pointer-events: auto; overflow-y: auto; }
+  .scene-body { min-height: 100%; display: flex; flex-direction: column; justify-content: center; }
+  #apert { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
+
+  /* Indicador de profundidad: un punto por capa */
+  .depth { position: fixed; right: clamp(14px, 2vw, 28px); top: 50%; transform: translateY(-50%); z-index: 45; display: grid; gap: 14px; }
+  .depth button { position: relative; width: 12px; height: 12px; border: 0; padding: 0; background: none; cursor: pointer; color: var(--blue); }
+  .depth button::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: currentColor; opacity: .35; transition: opacity .4s, transform .5s var(--spring); }
+  .depth button::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid currentColor; transform: scale(.4); opacity: 0; transition: transform .6s var(--ease), opacity .4s; }
+  .depth button.on::before { opacity: 1; transform: scale(1.1); }
+  .depth button.on::after { transform: none; opacity: 1; }
+  .depth button span { position: absolute; right: 22px; top: 50%; transform: translate(6px, -50%); white-space: nowrap; font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; opacity: 0; transition: opacity .3s, transform .4s var(--ease); pointer-events: none; }
+  .depth button:hover span, .depth button:focus-visible span { opacity: 1; transform: translate(0, -50%); }
+  .depth.dark button { color: #fff; }
+
+  /* ═════════ HERO ═════════ */
   .hero {
-    position: sticky; top: 0;
-    height: 100svh; min-height: 620px;
-    overflow: hidden;
     background: linear-gradient(180deg, #f2fbff 0%, #d2f2ff 52%, #b6eaff 100%);
   }
   #lens { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -135,12 +160,12 @@
   .ready .band-in { transform: none; }
 
   /* ───────── Voces de campaña ───────── */
-  .voices { background: linear-gradient(180deg, #f4fcff 0%, #fff 55%); }
-  .voices-in { padding: clamp(90px, 16vh, 170px) var(--gutter); max-width: 1320px; margin: 0 auto; }
+  .voices { background: linear-gradient(180deg, #f4fcff 0%, #fff 60%); }
+  .voices-in { width: 100%; padding: clamp(84px, 12vh, 120px) var(--gutter) clamp(40px, 6vh, 70px); max-width: 1320px; margin: 0 auto; }
   .voices-in > .label { color: var(--muted); display: flex; align-items: center; gap: 12px; margin-bottom: clamp(36px, 6vh, 56px); }
   .voice {
     display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: center;
-    padding: clamp(20px, 3.4vh, 34px) 0;
+    padding: clamp(16px, 3vh, 32px) 0;
     border-top: 1px solid var(--line);
   }
   .voice:last-child { border-bottom: 1px solid var(--line); }
@@ -156,12 +181,15 @@
   .voice.on .mark i { transform: none; opacity: 1; }
 
   /* ───────── Sedes ───────── */
-  .sedes { padding: 0 var(--gutter) clamp(110px, 20vh, 200px); max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 28px); }
+  .scene-sedes { background: #fff; }
+  .sedes-in { width: 100%; max-width: 1320px; margin: 0 auto; padding: clamp(84px, 12vh, 120px) var(--gutter) clamp(40px, 6vh, 70px); }
+  .sedes-in > .label { color: var(--muted); display: block; margin-bottom: clamp(20px, 4vh, 36px); }
+  .sedes { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 28px); }
   .sede {
     position: relative; overflow: hidden; isolation: isolate;
     border-radius: 28px; background: var(--mist);
     padding: clamp(26px, 3vw, 44px);
-    min-height: clamp(300px, 44vh, 420px);
+    min-height: clamp(220px, 46vh, 420px);
     display: flex; flex-direction: column; justify-content: space-between;
     opacity: 0; transform: translateY(24px);
     transition: opacity 1.2s var(--ease), transform 1.2s var(--ease), box-shadow .6s var(--ease);
@@ -184,18 +212,17 @@
 
   /* ───────── Evento: se abre como un círculo que crece ───────── */
   .event {
-    position: relative; overflow: hidden; isolation: isolate;
+    isolation: isolate;
     background: linear-gradient(160deg, var(--blue) 0%, var(--blue-deep) 100%);
     color: #fff;
-    padding: clamp(110px, 20vh, 200px) var(--gutter) clamp(80px, 12vh, 130px);
-    clip-path: circle(var(--open, 150%) at 50% 0%);
   }
+  .event .scene-body { padding: clamp(84px, 12vh, 120px) var(--gutter) clamp(40px, 6vh, 70px); }
   .event .discs { position: absolute; z-index: -1; right: -22vmax; top: -26vmax; width: 78vmax; aspect-ratio: 1; }
   .event .discs i { position: absolute; border-radius: 50%; inset: calc(var(--k) * 12%); background: linear-gradient(180deg, rgba(150,237,254,.16), rgba(255,255,255,.03)); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); animation: breathe 10s var(--ease-io) infinite alternate; animation-delay: calc(var(--k) * -1.2s); }
   @keyframes breathe { to { transform: scale(1.03); } }
-  .event-wrap { max-width: 1320px; margin: 0 auto; }
+  .event-wrap { width: 100%; max-width: 1320px; margin: 0 auto; }
   .event .label { opacity: .7; }
-  .event h2 { font-weight: 300; font-size: clamp(48px, 7.6vw, 128px); line-height: 1; letter-spacing: -.05em; margin: 26px 0 clamp(60px, 11vh, 110px); }
+  .event h2 { font-weight: 300; font-size: clamp(44px, min(7.2vw, 12vh), 120px); line-height: 1; letter-spacing: -.05em; margin: 22px 0 clamp(30px, 7vh, 90px); }
   .event h2 strong { font-weight: 600; }
   .facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,.25); }
   .fact { padding: 26px 22px 0 0; }
@@ -206,7 +233,7 @@
   .fact a.s:hover { background-size: 0 1px; background-position: 100% 100%; }
   .fact a.s span { transition: transform .5s var(--spring); }
   .fact a.s:hover span { transform: translate(2px, -2px); }
-  .countdown { margin-top: clamp(50px, 9vh, 90px); display: flex; flex-wrap: wrap; gap: 10px; }
+  .countdown { margin-top: clamp(28px, 6vh, 70px); display: flex; flex-wrap: wrap; gap: 10px; }
   .countdown > span { display: inline-flex; align-items: baseline; gap: 8px; padding: 12px 20px; border-radius: 99px; background: rgba(255,255,255,.12); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
   /* dígitos que ruedan al cambiar */
   .roll { display: inline-grid; overflow: hidden; font-weight: 500; font-size: 22px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; text-transform: none; line-height: 1.15; }
@@ -215,7 +242,8 @@
   .roll .out { transform: translateY(-80%); opacity: 0; }
 
   /* ───────── RSVP ───────── */
-  .rsvp { padding: clamp(100px, 18vh, 180px) var(--gutter); max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 8vw, 140px); scroll-margin-top: 30px; }
+  .scene-rsvp { background: #fff; }
+  .rsvp { width: 100%; padding: clamp(96px, 14vh, 140px) var(--gutter) clamp(60px, 10vh, 100px); max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 8vw, 140px); }
   .rsvp-intro .label { color: var(--muted); }
   .rsvp-intro h2 { font-weight: 300; font-size: clamp(40px, 5vw, 84px); line-height: 1.02; letter-spacing: -.045em; margin-top: 22px; }
   .rsvp-intro h2 strong { font-weight: 600; color: var(--blue); }
@@ -334,8 +362,8 @@
   }
   @media (max-width: 640px) {
     .topbar .cta { padding: 8px 14px; font-size: 12px; }
-    .hero-track { height: 200vh; }
     .hero-copy { top: 60%; }
+    .depth { display: none; }
     .band { height: 150px; }
     .band-inner { grid-template-columns: 1fr; gap: 14px; }
     .band-inner .meta, .band-inner .logo { display: none; }
@@ -343,13 +371,17 @@
     .voice { grid-template-columns: 34px 1fr; gap: 10px; }
     .mark { transform: scale(.8); }
     .row2 { grid-template-columns: 1fr; }
-    .sede { min-height: 280px; }
+    .sede { min-height: 0; gap: 26px; }
+    .sede .discs { width: 40%; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
-    .hero-track { height: auto; }
-    .hero { position: relative; }
-    .event { clip-path: none; }
+    .journey { height: auto !important; }
+    .stage { position: static; height: auto; overflow: visible; }
+    .scene { position: relative; visibility: visible; pointer-events: auto; overflow: visible; }
+    .hero { height: 100svh; }
+    .scene-body { min-height: 0; }
+    #apert, .depth { display: none; }
   }
 </style>
 </head>
@@ -360,11 +392,19 @@
   <a href="#rsvp" class="cta magnetic"><i></i>Confirmar asistencia</a>
 </header>
 
-<main id="top">
+<nav class="depth" id="depth" aria-label="Capas">
+  <button type="button" data-go="0"><span>Inicio</span></button>
+  <button type="button" data-go="1"><span>Pensado para ti</span></button>
+  <button type="button" data-go="2"><span>Sedes</span></button>
+  <button type="button" data-go="3"><span>El evento</span></button>
+  <button type="button" data-go="4"><span>RSVP</span></button>
+</nav>
 
-  <!-- HERO: lentes de campaña que fluyen hacia el centro; el scroll entra en el círculo -->
-  <section class="hero-track" id="heroTrack" aria-label="Lanzamiento Metrored Iñaquito y San Luis">
-    <div class="hero" id="hero">
+<main id="top" class="journey">
+ <div class="stage" id="stage">
+
+  <!-- CAPA 0 · HERO: lentes de campaña que fluyen hacia el centro -->
+  <section class="scene hero" aria-label="Lanzamiento Metrored Iñaquito y San Luis">
       <canvas id="lens" aria-hidden="true"></canvas>
       <div class="hero-copy" id="heroCopy">
         <span class="pill-label label fade" style="--d:.9s"><i></i>Lanzamiento oficial</span>
@@ -389,21 +429,26 @@
           </div>
         </div>
       </div>
-    </div>
   </section>
 
-  <!-- VOCES DE CAMPAÑA -->
-  <section class="voices" aria-label="Pensado alrededor de ti">
+  <!-- CAPA 1 · VOCES DE CAMPAÑA (aparece dentro del núcleo del hero) -->
+  <section class="scene voices" aria-label="Pensado alrededor de ti">
+   <div class="scene-body">
     <div class="voices-in">
       <div class="label"><span class="mark" aria-hidden="true" style="transform:scale(.7)"><i style="transform:none;opacity:1"></i><i style="transform:none;opacity:1"></i><i style="transform:none;opacity:1"></i></span>Pensado alrededor de ti</div>
       <div class="voice"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><q>La tranquilidad de agendar <strong>rápido y fácil.</strong></q></div>
       <div class="voice"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><q>Es un alivio tener un Metrored <strong>cerca de mí.</strong></q></div>
       <div class="voice"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><q>Merezco un servicio de salud <strong>accesible.</strong></q></div>
     </div>
+   </div>
   </section>
 
-  <!-- SEDES -->
-  <section class="sedes" aria-label="Nuevas sedes">
+  <!-- CAPA 2 · SEDES -->
+  <section class="scene scene-sedes" aria-label="Nuevas sedes">
+   <div class="scene-body">
+   <div class="sedes-in">
+    <span class="label">Nuevas sedes</span>
+    <div class="sedes">
     <article class="sede reveal">
       <div class="discs" aria-hidden="true"><i style="--k:0;--c:rgba(110,220,255,.28)"></i><i style="--k:1;--c:rgba(110,220,255,.4)"></i><i style="--k:2;--c:rgba(22,134,242,.22)"></i><i style="--k:3.2;--c:#1686f2"></i></div>
       <span class="label">01 — Quito</span>
@@ -420,11 +465,15 @@
         <p><span class="pin" aria-hidden="true"></span>San Luis Shopping</p>
       </div>
     </article>
+    </div>
+   </div>
+   </div>
   </section>
 
-  <!-- EVENTO -->
-  <section class="event" id="event" aria-labelledby="ev-t">
+  <!-- CAPA 3 · EVENTO -->
+  <section class="scene event" id="event" aria-labelledby="ev-t">
     <div class="discs" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i></div>
+   <div class="scene-body">
     <div class="event-wrap">
       <div class="label reveal fade">El evento</div>
       <h2 id="ev-t" class="reveal">
@@ -444,10 +493,12 @@
         <span><b class="roll" data-cd="s"></b>seg</span>
       </div>
     </div>
+   </div>
   </section>
 
-  <!-- RSVP -->
-  <section class="rsvp" id="rsvp" aria-labelledby="rsvp-t">
+  <!-- CAPA 4 · RSVP (el fondo del viaje; si no cabe, se desplaza dentro de la capa) -->
+  <section class="scene scene-rsvp" id="sRsvp" aria-label="Confirmar asistencia">
+  <div class="rsvp" id="rsvp" aria-labelledby="rsvp-t">
     <div class="rsvp-intro">
       <div class="label reveal fade">RSVP</div>
       <h2 id="rsvp-t" class="reveal">
@@ -521,8 +572,7 @@
         <a class="pill" href="https://www.google.com/maps/search/?api=1&query=San+Luis+Shopping+Sangolqu%C3%AD" target="_blank" rel="noopener">Cómo llegar ↗</a>
       </div>
     </div>
-  </section>
-</main>
+  </div>
 
 <footer id="footer">
   <svg viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true">
@@ -534,6 +584,11 @@
     <div class="meta"><span>Nuevo Metrored Iñaquito: Av. Juan Diguja y Vozandes</span><span>Grupo Hospital Metropolitano</span></div>
   </div>
 </footer>
+  </section>
+
+  <canvas id="apert" aria-hidden="true"></canvas>
+ </div>
+</main>
 
 <script>
 /* ════════════════════════════════════════════════════════════════
@@ -573,14 +628,17 @@ requestAnimationFrame(() => setTimeout(() => document.body.classList.add('ready'
      logarítmica (velocidad perceptual constante) hasta fundirse con el núcleo.
    - Un pulso fino se contrae dentro del núcleo hacia el punto azul (el cliente).
    - Al hacer scroll la cámara entra en el núcleo hasta llenar la pantalla. */
+const stage = document.getElementById('stage');
 const cv = document.getElementById('lens');
-const ctx = cv.getContext('2d');
+const ap = document.getElementById('apert');
+let ctx = cv.getContext('2d');
+const actx = ap.getContext('2d');
+const hctx = ctx;
 let W = 0, H = 0;
 function size() {
   const dpr = Math.min(devicePixelRatio || 1, 2);
-  W = cv.clientWidth; H = cv.clientHeight;
-  cv.width = W * dpr; cv.height = H * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  W = stage.clientWidth; H = stage.clientHeight;
+  for (const [c, x] of [[cv, hctx], [ap, actx]]) { c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }
 }
 size(); addEventListener('resize', size);
 
@@ -617,12 +675,13 @@ function drawLens(x, y, r, alpha, deep) {
   lensPath(x, y, r - 2); ctx.lineWidth = 4; ctx.strokeStyle = b; ctx.stroke();
 }
 
-const heroTrack = document.getElementById('heroTrack');
 const heroCopy = document.getElementById('heroCopy');
 const band = document.getElementById('band');
 let dive = 0;
+const core = { x: 0, y: 0, r: 0, rMax: 1 };   // núcleo del hero, compartido con la capa siguiente
 
 function drawHero(now) {
+  ctx = hctx;
   const t = Math.max(0, now - born) / 1000;
   ctx.clearRect(0, 0, W, H);
   const mobile = W < 640;
@@ -668,6 +727,7 @@ function drawHero(now) {
   const kc = reduced ? 1 : easeBack(clamp((t - .5) / 1.1));
   const [ncx, ncy] = centerFor(rc, 0);
   const nx = cx + (ncx - cx) * Z, ny = cy + (ncy - cy) * Z, nr = rc * kc * Z;
+  core.x = nx; core.y = ny; core.r = nr; core.u = easeIn(clamp(dive / .85));
   if (nr > 0) {
     const g = ctx.createRadialGradient(nx, ny - nr * .35, nr * .1, nx, ny, nr);
     g.addColorStop(0, '#ffffff');
@@ -697,9 +757,6 @@ function drawHero(now) {
 }
 
 function updateDive() {
-  const r = heroTrack.getBoundingClientRect();
-  const total = r.height - innerHeight;
-  dive = reduced || total <= 0 ? 0 : clamp(-r.top / total);
   const e = easeIn(clamp(dive * 1.6));
   heroCopy.style.opacity = (1 - e).toFixed(3);
   heroCopy.style.transform = `translateY(calc(-50% - ${(dive * 60).toFixed(1)}px)) scale(${(1 + dive * .12).toFixed(3)})`;
@@ -707,46 +764,150 @@ function updateDive() {
   band.style.transform = `translateY(${(easeIn(clamp(dive * 1.4)) * 110).toFixed(1)}%)`;
 }
 
-/* ───────── Voces ───────── */
+/* ═════════ Línea de tiempo del viaje ═════════
+   Unidades = alturas de pantalla de scroll. Cada capa tiene una entrada
+   (trans: la cámara atraviesa un círculo) y una pausa (hold: se lee e interactúa). */
+const journey = document.getElementById('top');
+const scenes = [...document.querySelectorAll('.scene')];
+const PLAN = [{ trans: 0, hold: .12 }, { trans: 1.25, hold: .9 }, { trans: .95, hold: .55 }, { trans: .95, hold: .6 }, { trans: .95, hold: 0 }];
+const seg = []; let acc = 0;
+PLAN.forEach((p, k) => { const s0 = acc; acc += p.trans; const s1 = acc; acc += p.hold; seg.push({ s0, s1, h1: acc }); });
+const TOTAL = acc;
+let unit = innerHeight;
+
+const flat = reduced;
+if (flat) document.documentElement.classList.add('flat');
+
+function layout() {
+  unit = stage.clientHeight || innerHeight;
+  journey.style.height = flat ? '' : (TOTAL * unit + unit) + 'px';
+  // puntos de anclaje suaves en el inicio de cada pausa
+  journey.querySelectorAll('.snap').forEach(n => n.remove());
+  if (!flat) seg.forEach(g => { const m = document.createElement('i'); m.className = 'snap'; m.style.top = (g.s1 * unit) + 'px'; journey.appendChild(m); });
+}
+layout(); addEventListener('resize', layout);
+setTimeout(() => !flat && document.documentElement.classList.add('snapping'), 1500);
+
+const ease2 = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 const voices = [...document.querySelectorAll('.voice')];
-function updateVoices() {
-  voices.forEach(v => v.classList.toggle('on', reduced || v.getBoundingClientRect().top < innerHeight * .7));
-}
-
-/* ───────── Evento: se abre como un círculo desde arriba ───────── */
-const ev = document.getElementById('event');
-function updateEvent() {
-  if (reduced) return;
-  const r = ev.getBoundingClientRect();
-  const p = clamp((innerHeight - r.top) / (innerHeight * .85));
-  ev.style.setProperty('--open', (8 + easeOut(p) * 142).toFixed(2) + '%');
-}
-
-/* ───────── Barra superior ───────── */
 const topbar = document.getElementById('topbar');
-const darkSecs = [ev, document.getElementById('footer')];
-let lastY = scrollY;
-function updateTopbar() {
-  const y = scrollY;
-  topbar.classList.toggle('dark', darkSecs.some(s => { const r = s.getBoundingClientRect(); return r.top <= 34 && r.bottom > 34; }));
-  const pastHero = y > heroTrack.offsetHeight - innerHeight * .4;
-  topbar.classList.toggle('scrolled', pastHero);
-  if (Math.abs(y - lastY) > 4) { topbar.classList.toggle('hide', pastHero && y > lastY); lastY = y; }
+const depthNav = document.getElementById('depth');
+const dots = [...depthNav.querySelectorAll('button')];
+let current = 0;
+
+/* lente de vidrio en forma de anillo alrededor de la apertura */
+function ringLens(x, y, r0, r1, a, deep) {
+  if (a <= .003) return;
+  const g = actx.createLinearGradient(x, y - r1, x, y + r1);
+  if (deep) { g.addColorStop(0, `rgba(0,167,255,${.32 * a})`); g.addColorStop(1, `rgba(22,134,242,${.45 * a})`); }
+  else { g.addColorStop(0, `rgba(150,237,254,${.7 * a})`); g.addColorStop(.55, `rgba(118,216,253,${.48 * a})`); g.addColorStop(1, `rgba(95,203,241,${.38 * a})`); }
+  actx.beginPath(); actx.arc(x, y, r1, 0, Math.PI * 2); actx.arc(x, y, r0, 0, Math.PI * 2, true);
+  actx.fillStyle = g; actx.fill('evenodd');
+  const s = actx.createLinearGradient(x, y - r1, x, y + r1 * .4);
+  s.addColorStop(0, `rgba(255,255,255,${.85 * a})`); s.addColorStop(1, 'rgba(255,255,255,0)');
+  actx.beginPath(); actx.arc(x, y, r1 - .75, 0, Math.PI * 2); actx.lineWidth = 1.5; actx.strokeStyle = s; actx.stroke();
+}
+
+function updateJourney() {
+  const pos = clamp(scrollY / unit, 0, TOTAL);
+  actx.clearRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2, R = Math.hypot(cx, cy) * 1.04;
+  let cur = 0;
+
+  scenes.forEach((sc, k) => {
+    const g = seg[k];
+    const tin = k === 0 ? 1 : clamp((pos - g.s0) / (g.s1 - g.s0));
+    const tout = k === scenes.length - 1 ? 0 : clamp((pos - seg[k + 1].s0) / (seg[k + 1].s1 - seg[k + 1].s0));
+    const vis = tin > 0 && tout < 1;
+    sc.classList.toggle('vis', vis);
+    sc.style.zIndex = k + 1;
+    const active = tin >= 1 && tout <= 0.02;
+    sc.classList.toggle('active', active);
+    sc.inert = !active;
+    if (tin > .5) cur = k;
+    if (!vis) return;
+
+    let tf = '', clip = 'none', op = 1, blur = 0, origin = '50% 50%';
+    if (k === 0) {
+      dive = tout;                                  // el hero maneja su propia inmersión en canvas
+      updateDive();
+    } else if (tin < 1) {
+      if (k === 1) {
+        // la capa 1 vive dentro del núcleo del hero y crece con él.
+        // La escala nunca deja ver el borde de la capa: siempre cubre el círculo.
+        const edge = Math.max(1, Math.min(core.x, W - core.x, core.y, H - core.y));
+        const sc1 = Math.min(1, Math.max(.42 + .58 * (core.u || 0), core.r / edge));
+        clip = `circle(${(core.r / sc1).toFixed(1)}px at ${core.x.toFixed(1)}px ${core.y.toFixed(1)}px)`;
+        origin = `${core.x.toFixed(1)}px ${core.y.toFixed(1)}px`;
+        tf = `scale(${sc1.toFixed(4)})`;
+      } else {
+        // apertura que crece en escala logarítmica (velocidad de profundidad constante)
+        const e = ease2(tin);
+        const r = 6 * Math.pow(R / 6, e);
+        const scK = Math.min(1, Math.max(.5 + .5 * e, r / (Math.min(W, H) / 2)));
+        clip = `circle(${(r / scK).toFixed(1)}px at 50% 50%)`;
+        tf = `scale(${scK.toFixed(4)})`;
+        const fade = 1 - clamp((e - .72) / .28);
+        ringLens(cx, cy, r, r * 1.16, fade, k === 3);
+        ringLens(cx, cy, r * 1.16, r * 1.38, fade * .75, k !== 3);
+        ringLens(cx, cy, r * 1.38, r * 1.7, fade * .45, false);
+      }
+    }
+    if (tout > 0) {
+      // la capa actual pasa junto a la cámara
+      const e = easeIn(tout);
+      tf = `scale(${(1 + e * 1.8).toFixed(4)})`;
+      op = 1 - e * .55;
+      blur = tout * 7;
+    }
+    if (k > 0) {
+      sc.style.transformOrigin = origin;
+      sc.style.transform = tf;
+      sc.style.clipPath = clip;
+      sc.style.opacity = op.toFixed(3);
+      sc.style.filter = blur > .2 ? `blur(${blur.toFixed(1)}px)` : '';
+      if (tin > .6) sc.querySelectorAll('.reveal:not(.is-in)').forEach(n => n.classList.add('is-in'));
+    }
+    if (k === 1) {
+      // las voces se encienden una a una durante la pausa
+      const hp = clamp((pos - g.s1) / Math.max(.01, g.h1 - g.s1));
+      voices.forEach((v, j) => v.classList.toggle('on', tin > .92 && (hp >= j * .3 || tout > 0)));
+    }
+  });
+
+  if (cur !== current) { current = cur; }
+  dots.forEach((d, j) => d.classList.toggle('on', j === cur));
+  const dark = cur === 3;
+  topbar.classList.toggle('dark', dark);
+  depthNav.classList.toggle('dark', dark);
+  topbar.classList.toggle('scrolled', cur >= 1 && !dark);
 }
 
 function frame(now) {
-  updateDive();
-  if (heroTrack.getBoundingClientRect().bottom > 0) drawHero(now);
-  updateVoices(); updateEvent(); updateTopbar();
+  if (flat) { drawHero(now); }
+  else {
+    updateJourney();
+    if (scenes[0].classList.contains('vis')) drawHero(now);
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-/* ───────── Revelados ───────── */
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-}), { threshold: .2, rootMargin: '0px 0px -60px 0px' });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+/* Ir a una capa: la cámara recorre el túnel hasta su pausa */
+function goTo(k) {
+  const top = flat ? scenes[k].offsetTop : (k === scenes.length - 1 ? TOTAL : seg[k].s1 + .001) * unit;
+  scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+}
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.go)));
+
+/* ───────── Revelados (modo sin movimiento) ───────── */
+if (flat) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }), { threshold: .2 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  voices.forEach(v => v.classList.add('on'));
+}
 
 /* ───────── Micro interacciones: brillo y magnetismo ───────── */
 document.querySelectorAll('.glow').forEach(el => el.addEventListener('pointermove', e => {
@@ -762,12 +923,13 @@ if (finePointer && !reduced) document.querySelectorAll('.magnetic').forEach(el =
   el.addEventListener('pointerleave', () => el.style.transform = '');
 });
 
-/* Desplazamiento suave a anclas (respeta movimiento reducido) */
+/* Anclas: viajan por el túnel hasta la capa correspondiente */
 document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
-  const target = document.querySelector(a.getAttribute('href'));
-  if (!target) return;
+  const id = a.getAttribute('href');
+  const k = id === '#rsvp' ? scenes.length - 1 : id === '#top' ? 0 : -1;
+  if (k < 0) return;
   e.preventDefault();
-  target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  goTo(k);
 }));
 
 /* ───────── Cuenta regresiva con dígitos que ruedan ───────── */
@@ -826,7 +988,14 @@ function validate() {
   if (!asist) { replay(oa, 'err'); if (!first) first = document.getElementById('a1'); } else oa.classList.remove('err');
   const c = document.getElementById('f-c');
   if (!c.checked) { replay(consent, 'err'); if (!first) first = c; } else consent.classList.remove('err');
-  if (first) first.focus({ preventScroll: true }), first.closest('.field, .group, .consent')?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  if (first) {
+    first.focus({ preventScroll: true });
+    // desplazar dentro de la capa del RSVP, no la página
+    const box = first.closest('.field, .group, .consent');
+    const host = flat ? null : document.getElementById('sRsvp');
+    if (host && box) host.scrollBy({ top: box.getBoundingClientRect().top - host.clientHeight * .4, behavior: reduced ? 'auto' : 'smooth' });
+    else box?.scrollIntoView({ block: 'center' });
+  }
   return !first;
 }
 
@@ -871,7 +1040,8 @@ function done(data) {
   document.getElementById('pass').style.display = yes ? '' : 'none';
   document.getElementById('done-actions').style.display = yes ? '' : 'none';
   rsvp.classList.add('sent');
-  rsvp.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  const host = document.getElementById('sRsvp');
+  if (flat) rsvp.scrollIntoView({ block: 'start' }); else host.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
 }
 
 /* ───────── .ics ───────── */
