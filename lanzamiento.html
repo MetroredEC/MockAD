@@ -101,7 +101,9 @@
   html.lenis, html.lenis body { height: auto; }
   .lenis.lenis-smooth { scroll-behavior: auto !important; }
   .lenis.lenis-stopped { overflow: hidden; }
-  .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; }
+  /* fijo (no sticky): enfocar un campo dentro de un contenedor sticky hace que el navegador
+     desplace la página a la posición original del contenedor y la capa del RSVP se desactive */
+  .stage { position: fixed; top: 0; left: 0; right: 0; height: 100svh; overflow: hidden; background: #fff; }
   .scene {
     position: absolute; inset: 0;
     visibility: hidden; pointer-events: none;
@@ -940,7 +942,7 @@ function updateJourney() {
     const vis = tin > 0 && tout < 1;
     sc.classList.toggle('vis', vis);
     sc.style.zIndex = k + 1;
-    const active = tin >= 1 && tout <= 0.02;
+    const active = tin >= .985 && tout <= 0.02;   // tolerancia: el scroll puede detenerse a fracciones de píxel del final
     sc.classList.toggle('active', active);
     sc.inert = !active;
     if (tin > .5) cur = k;
