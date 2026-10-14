@@ -767,15 +767,7 @@
           <input type="radio" name="asistencia" id="a2" value="No"><label for="a2">No podré asistir</label>
         </div>
       </div>
-      <div class="collapse" id="g-acomp"><div>
-        <div class="group">
-          <span class="label">Acompañante</span>
-          <div class="opts">
-            <input type="radio" name="acompanantes" id="c0" value="0" checked><label for="c0">Solo yo</label>
-            <input type="radio" name="acompanantes" id="c1" value="1"><label for="c1">+1</label>
-          </div>
-        </div>
-      </div></div>
+      <input type="hidden" name="acompanantes" value="0">
 
       <div class="field"><textarea id="f-x" name="notas" rows="1" placeholder=" "></textarea><label for="f-x">Restricciones alimenticias o comentarios</label></div>
 
@@ -1315,7 +1307,6 @@ tick(); setInterval(tick, 1000);
 /* ───────── RSVP ───────── */
 const form = document.getElementById('form');
 const rsvp = document.getElementById('rsvp');
-const gAcomp = document.getElementById('g-acomp');
 const consent = document.getElementById('consent');
 /* ═════════ Invitación personalizada ═════════
    ?n=Nombre&a=Apellido  →  saludo con nombre, formulario pre-llenado y
@@ -1338,7 +1329,7 @@ if (guest) {
 const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
 
 form.addEventListener('change', e => {
-  if (e.target.name === 'asistencia') { gAcomp.classList.toggle('closed', e.target.value === 'No'); document.getElementById('o-asist').classList.remove('err'); }
+  if (e.target.name === 'asistencia') { document.getElementById('o-asist').classList.remove('err'); }
   if (e.target.name === 'consentimiento') consent.classList.remove('err');
 });
 form.querySelectorAll('.field input, .field textarea').forEach(i => {
