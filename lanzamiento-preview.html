@@ -576,6 +576,49 @@
     .ticket .t-row { gap: 16px; font-size: 12.5px; }
   }
 
+
+  /* ═════════ RSVP en una sola pantalla ═════════
+     Medidas en función del alto de la pantalla para que el formulario completo
+     quepa sin desplazarse, como el resto de capas. */
+  html:not(.flat) .scene-rsvp footer { display: none; }
+  html:not(.flat) .scene-rsvp .rsvp { min-height: 100%; align-items: center; padding-top: calc(clamp(64px, 9vh, 92px) + 1vh); padding-bottom: clamp(16px, 3vh, 36px); }
+  .rsvp-intro h2 { font-size: clamp(34px, min(4.8vw, 8vh), 84px); margin-top: clamp(10px, 2vh, 22px); }
+  .rsvp-intro p { margin-top: clamp(10px, 2vh, 24px); }
+  .ticket { margin-top: clamp(16px, 3.4vh, 36px); width: min(100%, 440px, 52vh); padding: clamp(16px, 2.6vh, 24px) clamp(18px, 2.8vh, 26px); }
+  .ticket .t-row::before { left: calc(-1 * clamp(18px, 2.8vh, 26px) - 11px); } .ticket .t-row::after { right: calc(-1 * clamp(18px, 2.8vh, 26px) - 11px); }
+  .form .field { padding-top: clamp(12px, 1.8vh, 18px); }
+  .form .field input, .form .field textarea { padding: clamp(9px, 1.4vh, 14px) 0 clamp(8px, 1.2vh, 12px); }
+  .form .field label { top: calc(clamp(12px, 1.8vh, 18px) + clamp(9px, 1.4vh, 14px)); }
+  .form .group { padding-top: clamp(14px, 2.6vh, 28px); }
+  .form .group > .label { margin-bottom: clamp(8px, 1.3vh, 14px); }
+  .form .consent { margin-top: clamp(14px, 2.4vh, 28px); }
+  .form .submit-wrap { margin-top: clamp(14px, 2.8vh, 36px); }
+  .form .submit { height: clamp(50px, 6.6vh, 62px); }
+  .form .submit .orb { width: clamp(38px, 5vh, 46px); height: clamp(38px, 5vh, 46px); }
+  @media (max-width: 900px) and (min-width: 641px) {
+    html:not(.flat) .scene-rsvp .rsvp { grid-template-columns: 1fr 1.25fr; gap: 40px; }
+  }
+  @media (max-width: 640px) {
+    html:not(.flat) .scene-rsvp .rsvp { gap: clamp(12px, 2.2vh, 20px); padding-top: clamp(70px, 10vh, 84px); padding-bottom: 14px; align-items: start; align-content: center; }
+    .rsvp-intro .chap { display: none; }
+    .rsvp-intro h2 { font-size: clamp(28px, 4.4vh, 36px); margin-top: 0; }
+    .rsvp-intro h2 .line { display: inline; } .rsvp-intro h2 .line + .line::before { content: " "; }
+    .rsvp-intro p { display: none; }
+    /* pase compacto: logo, nombre y fecha */
+    .ticket { aspect-ratio: auto; width: 100%; margin-top: clamp(10px, 1.8vh, 16px); padding: 14px 18px; border-radius: 20px; gap: 6px; }
+    .ticket .t-row { display: none; }
+    .ticket .t-top img { height: 20px; }
+    .ticket .t-name small { display: none; }
+    .ticket .t-name div { margin-top: 0; font-size: 20px; }
+    .ticket .rings { right: -18%; top: -120%; width: 70%; }
+    .ticket .stamp { top: auto; bottom: 12px; right: 16px; padding: 5px 10px; font-size: 9.5px; }
+    .form .row2 { grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .form .field input, .form .field textarea { font-size: 16px; }
+    .form .field label { font-size: 14px; }
+    .form .opts label { padding: 9px 16px 9px 12px; font-size: 14px; }
+    .form .consent { font-size: 12px; line-height: 1.4; }
+  }
+
   /* ───────── Responsive ───────── */
   @media (min-width: 641px) {
     .event .scene-body { padding-right: calc(var(--gutter) + 56px); }
