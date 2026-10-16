@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Registrar queja Puntonet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00b8e6;
+    --cyan-dark: #0099c2;
+    --navy: #003d5c;
+    --white: #ffffff;
+    --gray-50: #f7f9fb;
+    --gray-100: #eef2f6;
+    --gray-300: #c8d4de;
+    --gray-500: #6b8597;
+    --gray-700: #3d5a6c;
+    --success: #00a87e;
+    --error: #d92b42;
+    --font: 'DM Sans', system-ui, sans-serif;
+    --shadow: 0 4px 24px rgba(0,61,92,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body { font-family: var(--font); background: var(--gray-50); color: var(--navy); font-size: 15px; line-height: 1.45; min-height: 100vh; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+
+  header { background: var(--navy); color: var(--white); padding: 28px 16px 72px; text-align: center; }
+  header img { height: 30px; margin-bottom: 14px; }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header p { color: rgba(255,255,255,.7); font-size: 14px; margin-top: 4px; }
+
+  main { max-width: 600px; margin: -52px auto 40px; padding: 0 16px; }
+  .card { background: var(--white); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; }
+  .notice { background: #fff6e0; border: 1px solid #f3d58a; color: #6b4b00; padding: 10px 14px; border-radius: 10px; margin-bottom: 18px; font-size: 13px; }
+  .notice.err { background: #fde8eb; border-color: #f2b2bc; color: #8a1426; }
+
+  form { display: grid; gap: 18px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  label, .lbl { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  label small, .lbl small { font-weight: 400; color: var(--gray-500); }
+  input, select, textarea { border: 1.5px solid var(--gray-300); border-radius: 10px; padding: 11px 12px; background: var(--white); width: 100%; min-width: 0; font-weight: 400; color: var(--navy); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,184,230,.18); }
+  textarea { resize: vertical; min-height: 140px; }
+  .hint { font-size: 12px; font-weight: 400; color: var(--gray-500); display: flex; justify-content: space-between; gap: 8px; }
+
+  .seg { display: flex; gap: 8px; }
+  .seg label { flex: 1; position: relative; }
+  .seg input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+  .seg span { display: block; text-align: center; border: 1.5px solid var(--gray-300); border-radius: 10px; padding: 10px 6px; cursor: pointer; font-weight: 500; color: var(--navy); }
+  .seg input:checked + span { border-color: var(--cyan); background: #e3f8fd; font-weight: 600; }
+  .seg input:focus-visible + span { box-shadow: 0 0 0 3px rgba(0,184,230,.25); }
+
+  .btn { border: 0; border-radius: 11px; padding: 13px 18px; font-weight: 600; cursor: pointer; background: var(--gray-100); color: var(--navy); text-align: center; text-decoration: none; display: inline-block; transition: background .15s; }
+  .btn:hover { background: var(--gray-300); }
+  .btn.primary { background: var(--cyan); color: var(--navy); width: 100%; font-size: 16px; }
+  .btn.primary:hover { background: var(--cyan-dark); color: var(--white); }
+  .btn:disabled { opacity: .6; cursor: wait; }
+
+  .ok { text-align: center; padding: 12px 0 4px; }
+  .ok .check { width: 64px; height: 64px; border-radius: 50%; background: #ddf6ee; color: var(--success); display: grid; place-items: center; margin: 0 auto 14px; font-size: 32px; font-weight: 700; }
+  .ok h2 { font-size: 20px; margin-bottom: 6px; }
+  .ok p { color: var(--gray-700); }
+  .ok blockquote { margin: 16px 0; padding: 12px 14px; background: var(--gray-50); border-radius: 10px; text-align: left; font-size: 14px; color: var(--gray-700); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+  .stats div { background: var(--gray-50); border-radius: 12px; padding: 12px 6px; }
+  .stats b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+  .stats span { font-size: 12px; color: var(--gray-500); }
+  .ok .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .foot { text-align: center; margin-top: 16px; font-size: 13px; }
+  .foot a { color: var(--cyan-dark); font-weight: 600; text-decoration: none; }
+
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+    .card { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="assets/metrored-logo-white.png" alt="Metrored">
+  <h1>Registrar una queja</h1>
+  <p>Puntonet · Incidencias con el servicio de Metrored</p>
+</header>
+
+<main>
+  <div class="card">
+    <div id="aviso"></div>
+
+    <form id="frm" novalidate>
+      <div class="row">
+        <label>Fecha del incidente<input type="date" name="fecha" required></label>
+        <label>Sucursal<input name="sucursal" list="lSuc" placeholder="Ej. QUITO" autocomplete="off" required></label>
+      </div>
+
+      <label>¿Qué pasó?
+        <textarea name="descripcion" required placeholder="Describa el problema: examen afectado, horas, solicitudes enviadas y a quién se contactó."></textarea>
+        <span class="hint"><span id="sugerida"></span><span id="largo"></span></span>
+      </label>
+
+      <div class="row">
+        <label>Categoría <small>se sugiere sola, puede cambiarla</small><select name="categoria"></select></label>
+        <label>Quién reporta<input name="reporta" list="lRep" placeholder="Su nombre" autocomplete="name" required></label>
+      </div>
+
+      <div class="lbl">¿Ya se reportó a Metrored?
+        <div class="seg">
+          <label><input type="radio" name="reportado" value="SI" checked><span>Sí</span></label>
+          <label><input type="radio" name="reportado" value="NO"><span>Todavía no</span></label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn primary" id="btnEnviar">Registrar queja</button>
+    </form>
+
+    <div class="ok" id="ok" hidden>
+      <div class="check">✓</div>
+      <h2>Queja registrada</h2>
+      <p id="okTxt"></p>
+      <blockquote id="okDesc"></blockquote>
+      <div class="stats" id="stats"></div>
+      <div class="actions">
+        <button class="btn primary" id="btnOtra" style="width:auto">Registrar otra</button>
+        <a class="btn" href="incidencias.html">Ver control de incidencias</a>
+      </div>
+    </div>
+  </div>
+  <p class="foot"><a href="incidencias.html">Ir al control de incidencias →</a></p>
+</main>
+
+<datalist id="lSuc"></datalist>
+<datalist id="lRep"></datalist>
+
+<script src="assets/incidencias.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const LS_REPORTA = 'pn_incidencias_reporta';
+const frm = $('#frm');
+let categoriaManual = false;
+
+frm.categoria.innerHTML = CATEGORIAS.map(c => `<option>${c}</option>`).join('');
+
+function limpiar() {
+  frm.reset();
+  frm.fecha.value = hoy();
+  frm.fecha.max = hoy();
+  try { frm.reporta.value = localStorage.getItem(LS_REPORTA) || ''; } catch (e) {}
+  frm.categoria.value = 'Otros';
+  categoriaManual = false;
+  actualizarAyuda();
+}
+
+function actualizarAyuda() {
+  const n = frm.descripcion.value.trim().length;
+  $('#largo').textContent = n ? `${n} caracteres` : '';
+  $('#sugerida').textContent = n && !categoriaManual ? `Categoría sugerida: ${frm.categoria.value}` : '';
+}
+
+/* Sugerencias de sucursal y persona a partir de lo ya registrado */
+async function sugerencias() {
+  try {
+    const lista = await store.listar();
+    const unicos = vals => [...new Set(vals.map(norm).filter(Boolean))].sort();
+    $('#lSuc').innerHTML = unicos(lista.map(x => x.sucursal)).map(v => `<option value="${esc(v)}">`).join('');
+    $('#lRep').innerHTML = unicos(lista.flatMap(x => String(x.reporta || '').split('/'))).map(v => `<option value="${esc(v)}">`).join('');
+    $('#aviso').innerHTML = ENDPOINT ? '' : '<div class="notice"><b>Modo demo:</b> la queja se guarda solo en este navegador y aparece en el control de incidencias de este mismo equipo.</div>';
+  } catch (e) {
+    $('#aviso').innerHTML = `<div class="notice err">${e.message === 'clave' ? 'Clave incorrecta. Recargue la página e inténtelo de nuevo.' : 'No se pudo conectar con el registro de incidencias. Revise su conexión y recargue.'}</div>`;
+  }
+}
+
+frm.descripcion.addEventListener('input', () => {
+  if (!categoriaManual) frm.categoria.value = sugerirCategoria(frm.descripcion.value);
+  actualizarAyuda();
+});
+frm.categoria.addEventListener('change', () => { categoriaManual = true; actualizarAyuda(); });
+
+frm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const falta = [...frm.querySelectorAll('[required]')].find(el => !el.value.trim());
+  if (falta) { falta.reportValidity(); falta.focus(); return; }
+
+  const inc = {
+    id: nuevoId(),
+    fecha: frm.fecha.value,
+    descripcion: frm.descripcion.value.trim(),
+    sucursal: norm(frm.sucursal.value),
+    reporta: norm(frm.reporta.value),
+    reportado: frm.reportado.value,
+    categoria: frm.categoria.value,
+    estado: 'Abierta',
+    seguimiento: ''
+  };
+  const btn = $('#btnEnviar');
+  btn.disabled = true;
+  btn.textContent = 'Registrando…';
+  try {
+    const lista = await store.guardar(inc);
+    try { localStorage.setItem(LS_REPORTA, frm.reporta.value.trim()); } catch (e) {}
+    const mes = hoy().slice(0, 7);
+    $('#okTxt').textContent = `${fmtFecha(inc.fecha)} · ${inc.sucursal} · ${inc.categoria}`;
+    $('#okDesc').textContent = inc.descripcion;
+    $('#stats').innerHTML = [
+      ['Registradas', lista.length],
+      ['Este mes', lista.filter(x => String(x.fecha || '').startsWith(mes)).length],
+      ['Sin cerrar', lista.filter(x => x.estado !== 'Cerrada').length]
+    ].map(([t, n]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
+    frm.hidden = true;
+    $('#ok').hidden = false;
+    $('#aviso').innerHTML = '';
+    scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    $('#aviso').innerHTML = '<div class="notice err">No se pudo registrar la queja. Sus datos siguen en el formulario; inténtelo de nuevo en un momento.</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Registrar queja';
+  }
+});
+
+$('#btnOtra').onclick = () => {
+  limpiar();
+  $('#ok').hidden = true;
+  frm.hidden = false;
+  sugerencias();
+  frm.descripcion.focus();
+};
+
+limpiar();
+sugerencias();
+</script>
+</body>
+</html>
